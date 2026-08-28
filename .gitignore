@@ -1,0 +1,17 @@
+# Go
+apps/api/tmp/
+
+# Environment
+.env
+.env.*
+
+# Node
+apps/web/node_modules/
+apps/web/dist/
+
+# IDE
+.idea/
+.vscode/
+
+# OS
+.DS_Store

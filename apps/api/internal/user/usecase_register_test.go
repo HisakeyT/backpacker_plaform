@@ -1,0 +1,181 @@
+package user
+
+import (
+	"errors"
+	"testing"
+
+	"golang.org/x/crypto/bcrypt"
+)
+
+func TestUseCase_Register(t *testing.T) {
+	email := "taro@example.com"
+
+	repository := &MockRepository{
+		FindByEmailFunc: func(email string) (*User, error) {
+			return nil, ErrUserNotFound
+		},
+		CreateFunc: func(user *User) error {
+			user.ID = 1
+			return nil
+		},
+	}
+
+	useCase := NewUseCase(repository)
+
+	input := RegisterInput{
+		Nickname:             "Taro",
+		Email:                &email,
+		Password:             "password123",
+		PasswordConfirmation: "password123",
+	}
+
+	user, err := useCase.Register(input)
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+
+	if user.ID != 1 {
+		t.Fatalf("expected ID 1, got %d", user.ID)
+	}
+
+	if user.Nickname != "Taro" {
+		t.Fatalf("expected nickname Taro, got %s", user.Nickname)
+	}
+
+	if user.Email == nil || *user.Email != email {
+		t.Fatalf("unexpected email")
+	}
+
+	if user.PasswordHash == "" {
+		t.Fatal("password hash should not be empty")
+	}
+
+	if err := bcrypt.CompareHashAndPassword(
+		[]byte(user.PasswordHash),
+		[]byte("password123"),
+	); err != nil {
+		t.Fatalf("password was not hashed correctly: %v", err)
+	}
+}
+
+func TestUseCase_Register_PasswordMismatch(t *testing.T) {
+	repository := &MockRepository{
+		FindByEmailFunc: func(email string) (*User, error) {
+			return nil, ErrUserNotFound
+		},
+		CreateFunc: func(user *User) error {
+			t.Fatal("Create should not be called")
+			return nil
+		},
+	}
+
+	useCase := NewUseCase(repository)
+
+	input := RegisterInput{
+		Nickname:             "Taro",
+		Password:             "password123",
+		PasswordConfirmation: "different-password",
+	}
+
+	_, err := useCase.Register(input)
+
+	if !errors.Is(err, ErrPasswordMismatch) {
+		t.Fatalf("expected ErrPasswordMismatch, got %v", err)
+	}
+}
+
+func TestUseCase_Register_EmailAlreadyUsed(t *testing.T) {
+	email := "taro@example.com"
+
+	repository := &MockRepository{
+		FindByEmailFunc: func(email string) (*User, error) {
+			return &User{
+				ID:    1,
+				Email: &email,
+			}, nil
+		},
+		CreateFunc: func(user *User) error {
+			t.Fatal("Create should not be called")
+			return nil
+		},
+	}
+
+	useCase := NewUseCase(repository)
+
+	input := RegisterInput{
+		Nickname:             "Taro",
+		Email:                &email,
+		Password:             "password123",
+		PasswordConfirmation: "password123",
+	}
+
+	_, err := useCase.Register(input)
+
+	if !errors.Is(err, ErrEmailAlreadyUsed) {
+		t.Fatalf("expected ErrEmailAlreadyUsed, got %v", err)
+	}
+}
+
+func TestUseCase_Register_FindByEmailError(t *testing.T) {
+	email := "taro@example.com"
+	expectedErr := errors.New("database error")
+
+	repository := &MockRepository{
+		FindByEmailFunc: func(email string) (*User, error) {
+			return nil, expectedErr
+		},
+		CreateFunc: func(user *User) error {
+			t.Fatal("Create should not be called")
+			return nil
+		},
+	}
+
+	useCase := NewUseCase(repository)
+
+	input := RegisterInput{
+		Nickname:             "Taro",
+		Email:                &email,
+		Password:             "password123",
+		PasswordConfirmation: "password123",
+	}
+
+	_, err := useCase.Register(input)
+
+	if !errors.Is(err, expectedErr) {
+		t.Fatalf("expected %v, got %v", expectedErr, err)
+	}
+}
+
+func TestUseCase_Register_WithoutEmail(t *testing.T) {
+	repository := &MockRepository{
+		FindByEmailFunc: func(email string) (*User, error) {
+			t.Fatal("FindByEmail should not be called")
+			return nil, nil
+		},
+		CreateFunc: func(user *User) error {
+			user.ID = 1
+			return nil
+		},
+	}
+
+	useCase := NewUseCase(repository)
+
+	input := RegisterInput{
+		Nickname:             "Taro",
+		Password:             "password123",
+		PasswordConfirmation: "password123",
+	}
+
+	user, err := useCase.Register(input)
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+
+	if user.ID != 1 {
+		t.Fatalf("expected ID 1, got %d", user.ID)
+	}
+
+	if user.Email != nil {
+		t.Fatalf("expected email to be nil")
+	}
+}
