@@ -8,7 +8,7 @@ import (
 )
 
 func TestLogin_Success(t *testing.T) {
-	email := "taro@example.com"
+	email := "test@example.com"
 
 	hashedPassword, err := bcrypt.GenerateFromPassword(
 		[]byte("password123"),
@@ -23,7 +23,7 @@ func TestLogin_Success(t *testing.T) {
 			return &User{
 				ID:           1,
 				Nickname:     "Taro",
-				Email:        &email,
+				Email:        "test@example.com",
 				PasswordHash: string(hashedPassword),
 			}, nil
 		},
@@ -44,7 +44,7 @@ func TestLogin_Success(t *testing.T) {
 		t.Errorf("expected user ID 1, got %d", user.ID)
 	}
 
-	if user.Email == nil || *user.Email != email {
+	if user.Email != email {
 		t.Errorf("expected email %s, got %v", email, user.Email)
 	}
 }
@@ -69,8 +69,6 @@ func TestLogin_UserNotFound(t *testing.T) {
 }
 
 func TestLogin_WrongPassword(t *testing.T) {
-	email := "taro@example.com"
-
 	hashedPassword, err := bcrypt.GenerateFromPassword(
 		[]byte("password123"),
 		bcrypt.DefaultCost,
@@ -84,7 +82,7 @@ func TestLogin_WrongPassword(t *testing.T) {
 			return &User{
 				ID:           1,
 				Nickname:     "Taro",
-				Email:        &email,
+				Email:        "test@example.com",
 				PasswordHash: string(hashedPassword),
 			}, nil
 		},
@@ -93,7 +91,7 @@ func TestLogin_WrongPassword(t *testing.T) {
 	useCase := NewUseCase(mockRepo)
 
 	_, err = useCase.Login(LoginInput{
-		Email:    email,
+		Email:    "test@example.com",
 		Password: "wrong-password",
 	})
 

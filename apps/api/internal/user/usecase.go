@@ -18,7 +18,7 @@ func NewUseCase(repository Repository) *UseCase {
 
 type RegisterInput struct {
 	Nickname             string
-	Email                *string
+	Email                string
 	Password             string
 	PasswordConfirmation string
 }
@@ -34,15 +34,13 @@ func (u *UseCase) Register(input RegisterInput) (*User, error) {
 		return nil, ErrPasswordMismatch
 	}
 
-	if input.Email != nil {
-		existingUser, err := u.repository.FindByEmail(*input.Email)
-		if err == nil && existingUser != nil {
-			return nil, ErrEmailAlreadyUsed
-		}
+	existingUser, err := u.repository.FindByEmail(input.Email)
+	if err == nil && existingUser != nil {
+		return nil, ErrEmailAlreadyUsed
+	}
 
-		if !errors.Is(err, ErrUserNotFound) && err != nil {
-			return nil, err
-		}
+	if !errors.Is(err, ErrUserNotFound) && err != nil {
+		return nil, err
 	}
 
 	passwordHash, err := bcrypt.GenerateFromPassword(

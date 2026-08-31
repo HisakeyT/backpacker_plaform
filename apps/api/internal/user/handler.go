@@ -18,10 +18,10 @@ func NewHandler(useCase *UseCase) *Handler {
 }
 
 type RegisterRequest struct {
-	Nickname             string  `json:"nickname" binding:"required"`
-	Email                *string `json:"email"`
-	Password             string  `json:"password" binding:"required"`
-	PasswordConfirmation string  `json:"password_confirmation" binding:"required"`
+	Nickname             string `json:"nickname" binding:"required"`
+	Email                string `json:"email"`
+	Password             string `json:"password" binding:"required"`
+	PasswordConfirmation string `json:"password_confirmation" binding:"required"`
 }
 
 func (h *Handler) Register(c *gin.Context) {

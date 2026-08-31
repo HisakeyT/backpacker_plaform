@@ -24,7 +24,7 @@ func TestUseCase_Register(t *testing.T) {
 
 	input := RegisterInput{
 		Nickname:             "Taro",
-		Email:                &email,
+		Email:                email,
 		Password:             "password123",
 		PasswordConfirmation: "password123",
 	}
@@ -42,7 +42,7 @@ func TestUseCase_Register(t *testing.T) {
 		t.Fatalf("expected nickname Taro, got %s", user.Nickname)
 	}
 
-	if user.Email == nil || *user.Email != email {
+	if user.Email != email {
 		t.Fatalf("unexpected email")
 	}
 
@@ -91,7 +91,7 @@ func TestUseCase_Register_EmailAlreadyUsed(t *testing.T) {
 		FindByEmailFunc: func(email string) (*User, error) {
 			return &User{
 				ID:    1,
-				Email: &email,
+				Email: email,
 			}, nil
 		},
 		CreateFunc: func(user *User) error {
@@ -104,7 +104,7 @@ func TestUseCase_Register_EmailAlreadyUsed(t *testing.T) {
 
 	input := RegisterInput{
 		Nickname:             "Taro",
-		Email:                &email,
+		Email:                email,
 		Password:             "password123",
 		PasswordConfirmation: "password123",
 	}
@@ -134,7 +134,7 @@ func TestUseCase_Register_FindByEmailError(t *testing.T) {
 
 	input := RegisterInput{
 		Nickname:             "Taro",
-		Email:                &email,
+		Email:                email,
 		Password:             "password123",
 		PasswordConfirmation: "password123",
 	}
@@ -173,9 +173,5 @@ func TestUseCase_Register_WithoutEmail(t *testing.T) {
 
 	if user.ID != 1 {
 		t.Fatalf("expected ID 1, got %d", user.ID)
-	}
-
-	if user.Email != nil {
-		t.Fatalf("expected email to be nil")
 	}
 }

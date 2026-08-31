@@ -29,7 +29,6 @@ func (f *fakeRepository) FindByEmail(email string) (*User, error) {
 
 func TestHandler_Register(t *testing.T) {
 	gin.SetMode(gin.TestMode)
-	email := "test@example.com"
 
 	tests := []struct {
 		name       string
@@ -49,7 +48,7 @@ func TestHandler_Register(t *testing.T) {
 			repository: &fakeRepository{
 				user: &User{
 					ID:    1,
-					Email: &email,
+					Email: "test@example.com",
 				},
 			},
 			wantStatus: http.StatusConflict,
@@ -103,6 +102,7 @@ func TestHandler_Login(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 
 	email := "test@example.com"
+	nickName := "test"
 
 	password := "password"
 	passwordHash, err := bcrypt.GenerateFromPassword(
@@ -125,8 +125,8 @@ func TestHandler_Login(t *testing.T) {
 			repository: &fakeRepository{
 				user: &User{
 					ID:           1,
-					Nickname:     "test",
-					Email:        &email,
+					Nickname:     nickName,
+					Email:        email,
 					PasswordHash: string(passwordHash),
 				},
 			},
@@ -138,8 +138,8 @@ func TestHandler_Login(t *testing.T) {
 			repository: &fakeRepository{
 				user: &User{
 					ID:           1,
-					Nickname:     "test",
-					Email:        &email,
+					Nickname:     nickName,
+					Email:        email,
 					PasswordHash: string(passwordHash),
 				},
 			},
