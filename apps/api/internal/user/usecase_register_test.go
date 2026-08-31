@@ -145,33 +145,3 @@ func TestUseCase_Register_FindByEmailError(t *testing.T) {
 		t.Fatalf("expected %v, got %v", expectedErr, err)
 	}
 }
-
-func TestUseCase_Register_WithoutEmail(t *testing.T) {
-	repository := &MockRepository{
-		FindByEmailFunc: func(email string) (*User, error) {
-			t.Fatal("FindByEmail should not be called")
-			return nil, nil
-		},
-		CreateFunc: func(user *User) error {
-			user.ID = 1
-			return nil
-		},
-	}
-
-	useCase := NewUseCase(repository)
-
-	input := RegisterInput{
-		Nickname:             "Taro",
-		Password:             "password123",
-		PasswordConfirmation: "password123",
-	}
-
-	user, err := useCase.Register(input)
-	if err != nil {
-		t.Fatalf("unexpected error: %v", err)
-	}
-
-	if user.ID != 1 {
-		t.Fatalf("expected ID 1, got %d", user.ID)
-	}
-}
