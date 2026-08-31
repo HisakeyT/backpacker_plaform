@@ -17,6 +17,12 @@ func NewHandler(useCase *UseCase) *Handler {
 	}
 }
 
+type UserResponse struct {
+	ID       uint   `json:"id"`
+	Nickname string `json:"nickname"`
+	Email    string `json:"email"`
+}
+
 type RegisterRequest struct {
 	Nickname             string `json:"nickname" binding:"required"`
 	Email                string `json:"email" binding:"required"`
@@ -63,10 +69,10 @@ func (h *Handler) Register(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusCreated, gin.H{
-		"id":       u.ID,
-		"nickname": u.Nickname,
-		"email":    u.Email,
+	c.JSON(http.StatusCreated, UserResponse{
+		ID:       u.ID,
+		Nickname: u.Nickname,
+		Email:    u.Email,
 	})
 }
 
@@ -95,5 +101,9 @@ func (h *Handler) Login(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, user)
+	c.JSON(http.StatusCreated, UserResponse{
+		ID:       user.ID,
+		Nickname: user.Nickname,
+		Email:    user.Email,
+	})
 }

@@ -25,7 +25,8 @@ func main() {
 
 	r := gin.Default()
 
-	r.POST("/users", userHandler.Register)
+	r.POST("/register", userHandler.Register)
+	r.POST("/login", userHandler.Login)
 
 	r.GET("/health", func(c *gin.Context) {
 		c.JSON(200, gin.H{
