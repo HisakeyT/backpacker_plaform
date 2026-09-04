@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/HisakeyT/backpacker-platform/internal/auth"
+	"github.com/golang-jwt/jwt/v5"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -33,7 +34,7 @@ func TestLogin_Success(t *testing.T) {
 	jwtManager := auth.NewJWTManager("test-secret")
 	useCase := NewUseCase(mockRepo, jwtManager)
 
-	user, err := useCase.Login(LoginInput{
+	result, err := useCase.Login(LoginInput{
 		Email:    email,
 		Password: "password123",
 	})
@@ -42,12 +43,40 @@ func TestLogin_Success(t *testing.T) {
 		t.Fatalf("unexpected error: %v", err)
 	}
 
-	if user.ID != 1 {
-		t.Errorf("expected user ID 1, got %d", user.ID)
+	if result.User.ID != 1 {
+		t.Errorf("expected user ID 1, got %d", result.User.ID)
 	}
 
-	if user.Email != email {
-		t.Errorf("expected email %s, got %v", email, user.Email)
+	if result.User.Email != email {
+		t.Errorf("expected email %s, got %v", email, result.User.Email)
+	}
+
+	if result.Token == "" {
+		t.Errorf("expected token to be generated")
+	}
+
+	token, err := jwt.Parse(
+		result.Token,
+		func(token *jwt.Token) (interface{}, error) {
+			return []byte("test-secret"), nil
+		},
+	)
+
+	if err != nil {
+		t.Fatalf("failed to parse token: %v", err)
+	}
+
+	if !token.Valid {
+		t.Error("expected token to be valid")
+	}
+
+	claims, ok := token.Claims.(jwt.MapClaims)
+	if !ok {
+		t.Fatal("expected claims to be jwt.MapClaims")
+	}
+
+	if claims["user_id"] != float64(1) {
+		t.Errorf("expected user_id 1, got %v", claims["user_id"])
 	}
 }
 

@@ -91,7 +91,7 @@ func (h *Handler) Login(c *gin.Context) {
 		return
 	}
 
-	user, err := h.useCase.Login(input)
+	result, err := h.useCase.Login(input)
 	if err != nil {
 		if errors.Is(err, ErrInvalidCredentials) {
 			c.JSON(http.StatusUnauthorized, gin.H{
@@ -109,9 +109,9 @@ func (h *Handler) Login(c *gin.Context) {
 	c.JSON(http.StatusCreated, LoginResponse{
 		Token: "xxxxx",
 		User: UserResponse{
-			ID:       user.ID,
-			Nickname: user.Nickname,
-			Email:    user.Email,
+			ID:       result.User.ID,
+			Nickname: result.User.Nickname,
+			Email:    result.User.Email,
 		},
 	})
 }

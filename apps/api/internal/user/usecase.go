@@ -72,7 +72,12 @@ type LoginInput struct {
 	Password string
 }
 
-func (u *UseCase) Login(input LoginInput) (*User, error) {
+type LoginOutput struct {
+	User  *User
+	Token string
+}
+
+func (u *UseCase) Login(input LoginInput) (*LoginOutput, error) {
 	user, err := u.repository.FindByEmail(input.Email)
 	if err != nil {
 		if errors.Is(err, ErrUserNotFound) {
@@ -84,5 +89,14 @@ func (u *UseCase) Login(input LoginInput) (*User, error) {
 	if err != nil {
 		return nil, ErrInvalidCredentials
 	}
-	return user, nil
+
+	token, err := u.jwtManager.GenerateToken(user.ID)
+	if err != nil {
+		return nil, err
+	}
+
+	return &LoginOutput{
+		User:  user,
+		Token: token,
+	}, nil
 }
