@@ -1,6 +1,7 @@
 package user
 
 import (
+	"encoding/json"
 	"net/http"
 	"net/http/httptest"
 	"strings"
@@ -116,10 +117,11 @@ func TestHandler_Login(t *testing.T) {
 	}
 
 	tests := []struct {
-		name       string
-		request    string
-		repository Repository
-		wantStatus int
+		name         string
+		request      string
+		repository   Repository
+		wantStatus   int
+		wantResponse *LoginResponse
 	}{
 		{
 			name:    "正常にログインできる",
@@ -133,6 +135,14 @@ func TestHandler_Login(t *testing.T) {
 				},
 			},
 			wantStatus: http.StatusOK,
+			wantResponse: &LoginResponse{
+				Token: "dummy-token",
+				User: UserResponse{
+					ID:       1,
+					Nickname: nickName,
+					Email:    email,
+				},
+			},
 		},
 		{
 			name:    "認証情報が不正",
@@ -191,6 +201,33 @@ func TestHandler_Login(t *testing.T) {
 					rec.Code,
 				)
 			}
+
+			if tt.wantResponse != nil {
+				response := decodeLoginResponse(t, rec)
+
+				if response.Token == "" {
+					t.Error("expected token to be generated")
+				}
+
+				if response.User != tt.wantResponse.User {
+					t.Errorf(
+						"expected user %+v, got %+v",
+						tt.wantResponse.User,
+						response.User,
+					)
+				}
+			}
 		})
 	}
+}
+
+func decodeLoginResponse(t *testing.T, rec *httptest.ResponseRecorder) LoginResponse {
+	t.Helper()
+
+	var response LoginResponse
+	if err := json.Unmarshal(rec.Body.Bytes(), &response); err != nil {
+		t.Fatalf("failed to decode response: %v", err)
+	}
+
+	return response
 }

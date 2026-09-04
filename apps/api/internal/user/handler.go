@@ -107,7 +107,7 @@ func (h *Handler) Login(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, LoginResponse{
-		Token: "xxxxx",
+		Token: result.Token,
 		User: UserResponse{
 			ID:       result.User.ID,
 			Nickname: result.User.Nickname,
