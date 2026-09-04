@@ -6,6 +6,7 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/HisakeyT/backpacker-platform/internal/auth"
 	"github.com/gin-gonic/gin"
 	"golang.org/x/crypto/bcrypt"
 )
@@ -71,7 +72,8 @@ func TestHandler_Register(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			router := gin.New()
 
-			useCase := NewUseCase(tt.repository)
+			jwtManager := auth.NewJWTManager("secret")
+			useCase := NewUseCase(tt.repository, jwtManager)
 			handler := NewHandler(useCase)
 
 			router.POST("/register", handler.Register)
@@ -165,7 +167,8 @@ func TestHandler_Login(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			router := gin.New()
 
-			useCase := NewUseCase(tt.repository)
+			jwtManager := auth.NewJWTManager("secret")
+			useCase := NewUseCase(tt.repository, jwtManager)
 			handler := NewHandler(useCase)
 
 			router.POST("/login", handler.Login)

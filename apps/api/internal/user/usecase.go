@@ -3,16 +3,19 @@ package user
 import (
 	"errors"
 
+	"github.com/HisakeyT/backpacker-platform/internal/auth"
 	"golang.org/x/crypto/bcrypt"
 )
 
 type UseCase struct {
 	repository Repository
+	jwtManager *auth.JWTManager
 }
 
-func NewUseCase(repository Repository) *UseCase {
+func NewUseCase(repository Repository, jwtManager *auth.JWTManager) *UseCase {
 	return &UseCase{
 		repository: repository,
+		jwtManager: jwtManager,
 	}
 }
 

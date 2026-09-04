@@ -4,6 +4,7 @@ import (
 	"errors"
 	"testing"
 
+	"github.com/HisakeyT/backpacker-platform/internal/auth"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -20,7 +21,8 @@ func TestUseCase_Register(t *testing.T) {
 		},
 	}
 
-	useCase := NewUseCase(repository)
+	jwtManager := auth.NewJWTManager("test-secret")
+	useCase := NewUseCase(repository, jwtManager)
 
 	input := RegisterInput{
 		Nickname:             "Taro",
@@ -69,7 +71,8 @@ func TestUseCase_Register_PasswordMismatch(t *testing.T) {
 		},
 	}
 
-	useCase := NewUseCase(repository)
+	jwtManager := auth.NewJWTManager("test-secret")
+	useCase := NewUseCase(repository, jwtManager)
 
 	input := RegisterInput{
 		Nickname:             "Taro",
@@ -100,7 +103,8 @@ func TestUseCase_Register_EmailAlreadyUsed(t *testing.T) {
 		},
 	}
 
-	useCase := NewUseCase(repository)
+	jwtManager := auth.NewJWTManager("test-secret")
+	useCase := NewUseCase(repository, jwtManager)
 
 	input := RegisterInput{
 		Nickname:             "Taro",
@@ -130,7 +134,8 @@ func TestUseCase_Register_FindByEmailError(t *testing.T) {
 		},
 	}
 
-	useCase := NewUseCase(repository)
+	jwtManager := auth.NewJWTManager("test-secret")
+	useCase := NewUseCase(repository, jwtManager)
 
 	input := RegisterInput{
 		Nickname:             "Taro",

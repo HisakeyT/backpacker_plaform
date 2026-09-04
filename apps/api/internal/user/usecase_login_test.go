@@ -4,6 +4,7 @@ import (
 	"errors"
 	"testing"
 
+	"github.com/HisakeyT/backpacker-platform/internal/auth"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -29,7 +30,8 @@ func TestLogin_Success(t *testing.T) {
 		},
 	}
 
-	useCase := NewUseCase(mockRepo)
+	jwtManager := auth.NewJWTManager("test-secret")
+	useCase := NewUseCase(mockRepo, jwtManager)
 
 	user, err := useCase.Login(LoginInput{
 		Email:    email,
@@ -56,7 +58,8 @@ func TestLogin_UserNotFound(t *testing.T) {
 		},
 	}
 
-	useCase := NewUseCase(mockRepo)
+	jwtManager := auth.NewJWTManager("test-secret")
+	useCase := NewUseCase(mockRepo, jwtManager)
 
 	_, err := useCase.Login(LoginInput{
 		Email:    "notfound@example.com",
@@ -88,7 +91,8 @@ func TestLogin_WrongPassword(t *testing.T) {
 		},
 	}
 
-	useCase := NewUseCase(mockRepo)
+	jwtManager := auth.NewJWTManager("test-secret")
+	useCase := NewUseCase(mockRepo, jwtManager)
 
 	_, err = useCase.Login(LoginInput{
 		Email:    "test@example.com",

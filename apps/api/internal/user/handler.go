@@ -23,6 +23,11 @@ type UserResponse struct {
 	Email    string `json:"email"`
 }
 
+type LoginResponse struct {
+	Token string       `json:"token"`
+	User  UserResponse `json:"user"`
+}
+
 type RegisterRequest struct {
 	Nickname             string `json:"nickname" binding:"required"`
 	Email                string `json:"email" binding:"required"`
@@ -101,9 +106,12 @@ func (h *Handler) Login(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusCreated, UserResponse{
-		ID:       user.ID,
-		Nickname: user.Nickname,
-		Email:    user.Email,
+	c.JSON(http.StatusCreated, LoginResponse{
+		Token: "xxxxx",
+		User: UserResponse{
+			ID:       user.ID,
+			Nickname: user.Nickname,
+			Email:    user.Email,
+		},
 	})
 }

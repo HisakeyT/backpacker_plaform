@@ -21,10 +21,8 @@ func main() {
 	jwtManager := auth.NewJWTManager(jwtSecret)
 
 	userRepository := user.NewGormRepository(db)
-	userUseCase := user.NewUseCase(userRepository)
+	userUseCase := user.NewUseCase(userRepository, jwtManager)
 	userHandler := user.NewHandler(userUseCase)
-
-	_ = jwtManager
 
 	r := gin.Default()
 
