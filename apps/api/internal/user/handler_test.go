@@ -132,7 +132,7 @@ func TestHandler_Login(t *testing.T) {
 					PasswordHash: string(passwordHash),
 				},
 			},
-			wantStatus: http.StatusCreated,
+			wantStatus: http.StatusOK,
 		},
 		{
 			name:    "認証情報が不正",

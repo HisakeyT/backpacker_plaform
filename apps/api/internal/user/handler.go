@@ -106,7 +106,7 @@ func (h *Handler) Login(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusCreated, LoginResponse{
+	c.JSON(http.StatusOK, LoginResponse{
 		Token: "xxxxx",
 		User: UserResponse{
 			ID:       result.User.ID,
