@@ -2,9 +2,11 @@ package main
 
 import (
 	"log"
+	"os"
 
 	"github.com/gin-gonic/gin"
 
+	"github.com/HisakeyT/backpacker-platform/internal/auth"
 	"github.com/HisakeyT/backpacker-platform/internal/database"
 	"github.com/HisakeyT/backpacker-platform/internal/user"
 )
@@ -15,13 +17,14 @@ func main() {
 		log.Fatal(err)
 	}
 
-	log.Println("Database connected successfully")
+	jwtSecret := os.Getenv("JWT_SECRET")
+	jwtManager := auth.NewJWTManager(jwtSecret)
 
 	userRepository := user.NewGormRepository(db)
 	userUseCase := user.NewUseCase(userRepository)
 	userHandler := user.NewHandler(userUseCase)
 
-	_ = userUseCase
+	_ = jwtManager
 
 	r := gin.Default()
 
