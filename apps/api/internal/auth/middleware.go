@@ -7,7 +7,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func AuthMiddleware() gin.HandlerFunc {
+func AuthMiddleware(jwtManager *JWTManager) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		authHeader := c.GetHeader("Authorization")
 
@@ -18,7 +18,13 @@ func AuthMiddleware() gin.HandlerFunc {
 			return
 		}
 
-		c.Set("token", parts[1])
+		userID, err := jwtManager.ValidateToken(parts[1])
+		if err != nil {
+			c.AbortWithStatus(http.StatusUnauthorized)
+			return
+		}
+
+		c.Set("userID", userID)
 
 		c.Next()
 	}
