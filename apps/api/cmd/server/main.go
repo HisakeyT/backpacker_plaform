@@ -26,14 +26,20 @@ func main() {
 
 	r := gin.Default()
 
-	r.POST("/register", userHandler.Register)
-	r.POST("/login", userHandler.Login)
-
 	r.GET("/health", func(c *gin.Context) {
 		c.JSON(200, gin.H{
 			"status": "ok",
 		})
 	})
+
+	r.POST("/register", userHandler.Register)
+	r.POST("/login", userHandler.Login)
+
+	protected := r.Group("/users")
+	protected.Use(auth.AuthMiddleware(jwtManager))
+	{
+		protected.GET("/me", userHandler.Me)
+	}
 
 	if err := r.Run(":8080"); err != nil {
 		log.Fatal(err)

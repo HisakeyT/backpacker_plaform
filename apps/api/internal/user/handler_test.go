@@ -231,3 +231,53 @@ func decodeLoginResponse(t *testing.T, rec *httptest.ResponseRecorder) LoginResp
 
 	return response
 }
+
+func TestHandler_Me(t *testing.T) {
+	gin.SetMode(gin.TestMode)
+
+	router := gin.New()
+
+	jwtManager := auth.NewJWTManager("secret")
+	useCase := NewUseCase(&fakeRepository{}, jwtManager)
+	handler := NewHandler(useCase)
+
+	router.Use(auth.AuthMiddleware(jwtManager))
+	router.GET("/users/me", handler.Me)
+
+	token, err := jwtManager.GenerateToken(123)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	req := httptest.NewRequest(
+		http.MethodGet,
+		"/users/me",
+		nil,
+	)
+	req.Header.Set("Authorization", "Bearer "+token)
+
+	rec := httptest.NewRecorder()
+
+	router.ServeHTTP(rec, req)
+
+	if rec.Code != http.StatusOK {
+		t.Fatalf(
+			"expected status %d, got %d",
+			http.StatusOK,
+			rec.Code,
+		)
+	}
+
+	var response map[string]uint
+	if err := json.Unmarshal(rec.Body.Bytes(), &response); err != nil {
+		t.Fatalf("failed to decode response: %v", err)
+	}
+
+	if response["user_id"] != 123 {
+		t.Errorf(
+			"expected user_id %d, got %d",
+			123,
+			response["user_id"],
+		)
+	}
+}

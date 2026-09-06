@@ -115,3 +115,11 @@ func (h *Handler) Login(c *gin.Context) {
 		},
 	})
 }
+
+func (h *Handler) Me(c *gin.Context) {
+	userID, _ := c.Get("userID")
+
+	c.JSON(http.StatusOK, gin.H{
+		"user_id": userID,
+	})
+}
