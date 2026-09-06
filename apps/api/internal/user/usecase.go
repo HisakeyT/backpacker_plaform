@@ -100,3 +100,7 @@ func (u *UseCase) Login(input LoginInput) (*LoginOutput, error) {
 		Token: token,
 	}, nil
 }
+
+func (u *UseCase) Me(userID uint) (*User, error) {
+	return u.repository.FindByID(userID)
+}

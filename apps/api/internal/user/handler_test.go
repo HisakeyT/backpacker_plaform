@@ -237,8 +237,16 @@ func TestHandler_Me(t *testing.T) {
 
 	router := gin.New()
 
+	repository := &fakeRepository{
+		user: &User{
+			ID:       123,
+			Nickname: "test",
+			Email:    "test@example.com",
+		},
+	}
+
 	jwtManager := auth.NewJWTManager("secret")
-	useCase := NewUseCase(&fakeRepository{}, jwtManager)
+	useCase := NewUseCase(repository, jwtManager)
 	handler := NewHandler(useCase)
 
 	router.Use(auth.AuthMiddleware(jwtManager))

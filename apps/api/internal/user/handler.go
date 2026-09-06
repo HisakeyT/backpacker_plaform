@@ -119,7 +119,15 @@ func (h *Handler) Login(c *gin.Context) {
 func (h *Handler) Me(c *gin.Context) {
 	userID, _ := c.Get("userID")
 
+	user, err := h.useCase.Me(userID.(uint))
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": "internal server error",
+		})
+		return
+	}
+
 	c.JSON(http.StatusOK, gin.H{
-		"user_id": userID,
+		"user_id": user.ID,
 	})
 }
