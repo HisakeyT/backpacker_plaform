@@ -1,6 +1,7 @@
 package user
 
 import (
+	"errors"
 	"testing"
 
 	"github.com/HisakeyT/backpacker-platform/internal/auth"
@@ -25,5 +26,21 @@ func TestUseCase_Me(t *testing.T) {
 
 	if user.ID != 1 {
 		t.Errorf("expected user ID %d, got %d", 1, user.ID)
+	}
+}
+
+func TestUseCase_Me_UserNotFound(t *testing.T) {
+	repository := &fakeRepository{err: ErrUserNotFound}
+	jwtManager := auth.NewJWTManager("secret")
+	useCase := NewUseCase(repository, jwtManager)
+
+	user, err := useCase.Me(999)
+
+	if !errors.Is(err, ErrUserNotFound) {
+		t.Fatalf("expected ErrUserNotFound, got %v", err)
+	}
+
+	if user != nil {
+		t.Errorf("expected nil user, got %+v", user)
 	}
 }

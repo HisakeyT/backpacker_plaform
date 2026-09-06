@@ -293,3 +293,43 @@ func TestHandler_Me(t *testing.T) {
 		t.Errorf("expected email %q, got %q", "test@example.com", response.Email)
 	}
 }
+
+func TestHandler_Me_UserNotFound(t *testing.T) {
+	gin.SetMode(gin.TestMode)
+
+	repository := &fakeRepository{
+		err: ErrUserNotFound,
+	}
+
+	jwtManager := auth.NewJWTManager("secret")
+	useCase := NewUseCase(repository, jwtManager)
+	handler := NewHandler(useCase)
+
+	router := gin.New()
+	router.Use(auth.AuthMiddleware(jwtManager))
+	router.GET("/users/me", handler.Me)
+
+	token, err := jwtManager.GenerateToken(123)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	req := httptest.NewRequest(
+		http.MethodGet,
+		"/users/me",
+		nil,
+	)
+	req.Header.Set("Authorization", "Bearer "+token)
+
+	rec := httptest.NewRecorder()
+
+	router.ServeHTTP(rec, req)
+
+	if rec.Code != http.StatusNotFound {
+		t.Fatalf(
+			"expected status %d, got %d",
+			http.StatusNotFound,
+			rec.Code,
+		)
+	}
+}

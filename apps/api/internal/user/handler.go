@@ -121,6 +121,13 @@ func (h *Handler) Me(c *gin.Context) {
 
 	user, err := h.useCase.Me(userID.(uint))
 	if err != nil {
+		if errors.Is(err, ErrUserNotFound) {
+			c.JSON(http.StatusNotFound, gin.H{
+				"error": "user not found",
+			})
+			return
+		}
+
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"error": "internal server error",
 		})
