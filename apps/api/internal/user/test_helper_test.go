@@ -4,6 +4,7 @@ type MockRepository struct {
 	CreateFunc      func(user *User) error
 	FindByIDFunc    func(id uint) (*User, error)
 	FindByEmailFunc func(email string) (*User, error)
+	UpdateFunc      func(user *User) error
 }
 
 func (m *MockRepository) Create(user *User) error {
@@ -25,4 +26,8 @@ func (m *MockRepository) FindByEmail(email string) (*User, error) {
 		return m.FindByEmailFunc(email)
 	}
 	return nil, ErrUserNotFound
+}
+
+func (m *MockRepository) Update(user *User) error {
+	return m.UpdateFunc(user)
 }

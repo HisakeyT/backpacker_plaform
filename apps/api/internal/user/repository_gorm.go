@@ -49,3 +49,7 @@ func (r *GormRepository) FindByEmail(email string) (*User, error) {
 
 	return &user, nil
 }
+
+func (r *GormRepository) Update(user *User) error {
+	return r.db.Save(user).Error
+}

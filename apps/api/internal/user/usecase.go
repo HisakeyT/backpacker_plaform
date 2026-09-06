@@ -104,3 +104,22 @@ func (u *UseCase) Login(input LoginInput) (*LoginOutput, error) {
 func (u *UseCase) Me(userID uint) (*User, error) {
 	return u.repository.FindByID(userID)
 }
+
+type UpdateMeInput struct {
+	Nickname string
+}
+
+func (u *UseCase) UpdateMe(userID uint, input UpdateMeInput) (*User, error) {
+	user, err := u.repository.FindByID(userID)
+	if err != nil {
+		return nil, err
+	}
+
+	user.Nickname = input.Nickname
+
+	if err := u.repository.Update(user); err != nil {
+		return nil, err
+	}
+
+	return user, nil
+}

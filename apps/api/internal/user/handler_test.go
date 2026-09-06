@@ -29,6 +29,10 @@ func (f *fakeRepository) FindByEmail(email string) (*User, error) {
 	return f.user, f.err
 }
 
+func (f *fakeRepository) Update(user *User) error {
+	return nil
+}
+
 func TestHandler_Register(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 
