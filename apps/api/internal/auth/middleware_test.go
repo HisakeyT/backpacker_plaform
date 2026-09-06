@@ -12,12 +12,9 @@ func TestAuthMiddleware_ExtractsBearerToken(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 
 	userID := uint(123)
-	jwtManager := NewJWTManager("test-secret")
 
-	token, err := jwtManager.GenerateToken(userID)
-	if err != nil {
-		t.Fatalf("failed to generate token: %v", err)
-	}
+	jwtManager := newTestJWTManager(t)
+	token := generateTestToken(t, jwtManager, userID)
 
 	r := gin.New()
 
@@ -58,12 +55,8 @@ func TestAuthMiddleware_ValidToken(t *testing.T) {
 
 	gin.SetMode(gin.TestMode)
 
-	jwtManager := NewJWTManager("test-secret")
-
-	token, err := jwtManager.GenerateToken(userID)
-	if err != nil {
-		t.Fatalf("failed to generate token: %v", err)
-	}
+	jwtManager := newTestJWTManager(t)
+	token := generateTestToken(t, jwtManager, userID)
 
 	r := gin.New()
 
@@ -102,20 +95,8 @@ func TestAuthMiddleware_ValidToken(t *testing.T) {
 func TestAuthMiddleware_MissingAuthorizationHeader(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 
-	userID := uint(123)
-	jwtManager := NewJWTManager("test-secret")
-
-	_, err := jwtManager.GenerateToken(userID)
-	if err != nil {
-		t.Fatalf("failed to generate token: %v", err)
-	}
-
-	r := gin.New()
-	r.Use(AuthMiddleware(jwtManager))
-
-	r.GET("/test", func(c *gin.Context) {
-		c.Status(http.StatusOK)
-	})
+	jwtManager := newTestJWTManager(t)
+	router := newTestRouter(t, jwtManager)
 
 	req := httptest.NewRequest(
 		http.MethodGet,
@@ -125,7 +106,7 @@ func TestAuthMiddleware_MissingAuthorizationHeader(t *testing.T) {
 
 	w := httptest.NewRecorder()
 
-	r.ServeHTTP(w, req)
+	router.ServeHTTP(w, req)
 
 	if w.Code != http.StatusUnauthorized {
 		t.Errorf("expected status 401, got %d", w.Code)
@@ -135,20 +116,8 @@ func TestAuthMiddleware_MissingAuthorizationHeader(t *testing.T) {
 func TestAuthMiddleware_InvalidAuthorizationScheme(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 
-	userID := uint(123)
-	jwtManager := NewJWTManager("test-secret")
-
-	_, err := jwtManager.GenerateToken(userID)
-	if err != nil {
-		t.Fatalf("failed to generate token: %v", err)
-	}
-
-	r := gin.New()
-	r.Use(AuthMiddleware(jwtManager))
-
-	r.GET("/test", func(c *gin.Context) {
-		c.Status(http.StatusOK)
-	})
+	jwtManager := newTestJWTManager(t)
+	router := newTestRouter(t, jwtManager)
 
 	req := httptest.NewRequest(
 		http.MethodGet,
@@ -160,7 +129,7 @@ func TestAuthMiddleware_InvalidAuthorizationScheme(t *testing.T) {
 
 	w := httptest.NewRecorder()
 
-	r.ServeHTTP(w, req)
+	router.ServeHTTP(w, req)
 
 	if w.Code != http.StatusUnauthorized {
 		t.Errorf("expected status 401, got %d", w.Code)
@@ -170,20 +139,9 @@ func TestAuthMiddleware_InvalidAuthorizationScheme(t *testing.T) {
 func TestAuthMiddleware_MissingToken(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 
-	userID := uint(123)
-	jwtManager := NewJWTManager("test-secret")
+	jwtManager := newTestJWTManager(t)
 
-	_, err := jwtManager.GenerateToken(userID)
-	if err != nil {
-		t.Fatalf("failed to generate token: %v", err)
-	}
-
-	r := gin.New()
-	r.Use(AuthMiddleware(jwtManager))
-
-	r.GET("/test", func(c *gin.Context) {
-		c.Status(http.StatusOK)
-	})
+	router := newTestRouter(t, jwtManager)
 
 	req := httptest.NewRequest(
 		http.MethodGet,
@@ -195,9 +153,39 @@ func TestAuthMiddleware_MissingToken(t *testing.T) {
 
 	w := httptest.NewRecorder()
 
-	r.ServeHTTP(w, req)
+	router.ServeHTTP(w, req)
 
 	if w.Code != http.StatusUnauthorized {
 		t.Errorf("expected status 401, got %d", w.Code)
 	}
+}
+
+// 共通関数化
+func newTestJWTManager(t *testing.T) *JWTManager {
+	t.Helper()
+
+	return NewJWTManager("test-secret")
+}
+
+func generateTestToken(t *testing.T, jwtManager *JWTManager, userID uint) string {
+	t.Helper()
+
+	token, err := jwtManager.GenerateToken(userID)
+	if err != nil {
+		t.Fatalf("failed to generate token: %v", err)
+	}
+
+	return token
+}
+
+func newTestRouter(t *testing.T, jwtManager *JWTManager) *gin.Engine {
+	r := gin.New()
+
+	r.Use(AuthMiddleware(jwtManager))
+
+	r.GET("/test", func(c *gin.Context) {
+		c.Status(http.StatusOK)
+	})
+
+	return r
 }
