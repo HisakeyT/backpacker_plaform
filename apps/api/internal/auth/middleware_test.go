@@ -8,48 +8,6 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func TestAuthMiddleware_ExtractsBearerToken(t *testing.T) {
-	gin.SetMode(gin.TestMode)
-
-	userID := uint(123)
-
-	jwtManager := newTestJWTManager(t)
-	token := generateTestToken(t, jwtManager, userID)
-
-	r := gin.New()
-
-	r.Use(AuthMiddleware(jwtManager))
-
-	r.GET("/test", func(c *gin.Context) {
-		getUserID, exists := c.Get("userID")
-		if !exists {
-			t.Fatal("token was not found in context")
-		}
-
-		if getUserID != userID {
-			t.Errorf("expected userID 123, got %v", userID)
-		}
-
-		c.Status(http.StatusOK)
-	})
-
-	req := httptest.NewRequest(
-		http.MethodGet,
-		"/test",
-		nil,
-	)
-
-	req.Header.Set("Authorization", "Bearer "+token)
-
-	w := httptest.NewRecorder()
-
-	r.ServeHTTP(w, req)
-
-	if w.Code != http.StatusOK {
-		t.Errorf("expected status 200, got %d", w.Code)
-	}
-}
-
 func TestAuthMiddleware_ValidToken(t *testing.T) {
 	userID := uint(123)
 
