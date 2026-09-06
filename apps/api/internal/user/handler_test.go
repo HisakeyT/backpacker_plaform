@@ -276,16 +276,20 @@ func TestHandler_Me(t *testing.T) {
 		)
 	}
 
-	var response map[string]uint
+	var response UserResponse
 	if err := json.Unmarshal(rec.Body.Bytes(), &response); err != nil {
 		t.Fatalf("failed to decode response: %v", err)
 	}
 
-	if response["user_id"] != 123 {
-		t.Errorf(
-			"expected user_id %d, got %d",
-			123,
-			response["user_id"],
-		)
+	if response.ID != 123 {
+		t.Errorf("expected user ID %d, got %d", 123, response.ID)
+	}
+
+	if response.Nickname != "test" {
+		t.Errorf("expected nickname %q, got %q", "test", response.Nickname)
+	}
+
+	if response.Email != "test@example.com" {
+		t.Errorf("expected email %q, got %q", "test@example.com", response.Email)
 	}
 }

@@ -127,7 +127,9 @@ func (h *Handler) Me(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{
-		"user_id": user.ID,
+	c.JSON(http.StatusOK, UserResponse{
+		ID:       user.ID,
+		Nickname: user.Nickname,
+		Email:    user.Email,
 	})
 }
