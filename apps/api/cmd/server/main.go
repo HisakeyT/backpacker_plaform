@@ -39,6 +39,7 @@ func main() {
 	protected.Use(auth.AuthMiddleware(jwtManager))
 	{
 		protected.GET("/me", userHandler.Me)
+		protected.PATCH("me", userHandler.UpdateMe)
 	}
 
 	if err := r.Run(":8080"); err != nil {

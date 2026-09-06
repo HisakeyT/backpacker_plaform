@@ -337,3 +337,64 @@ func TestHandler_Me_UserNotFound(t *testing.T) {
 		)
 	}
 }
+
+func TestHandler_UpdateMe(t *testing.T) {
+	gin.SetMode(gin.TestMode)
+
+	mockRepository := &MockRepository{
+		FindByIDFunc: func(id uint) (*User, error) {
+			return &User{
+				ID:       1,
+				Nickname: "old-nickname",
+				Email:    "test@example.com",
+			}, nil
+		},
+		UpdateFunc: func(user *User) error {
+			return nil
+		},
+	}
+
+	jwtManager := auth.NewJWTManager("test-secret")
+	useCase := NewUseCase(mockRepository, jwtManager)
+	handler := NewHandler(useCase)
+
+	router := gin.New()
+	router.PATCH("/users/me", func(c *gin.Context) {
+		c.Set("userID", uint(1))
+		handler.UpdateMe(c)
+	})
+
+	body := `{"nickname":"new-nickname"}`
+
+	req := httptest.NewRequest(
+		http.MethodPatch,
+		"/users/me",
+		strings.NewReader(body),
+	)
+	req.Header.Set("Content-Type", "application/json")
+
+	w := httptest.NewRecorder()
+
+	router.ServeHTTP(w, req)
+
+	if w.Code != http.StatusOK {
+		t.Fatalf("expected status 200, got %d", w.Code)
+	}
+
+	var response UserResponse
+	if err := json.Unmarshal(w.Body.Bytes(), &response); err != nil {
+		t.Fatalf("failed to decode response: %v", err)
+	}
+
+	if response.ID != 1 {
+		t.Errorf("expected ID 1, got %d", response.ID)
+	}
+
+	if response.Nickname != "new-nickname" {
+		t.Errorf("expected nickname new-nickname, got %s", response.Nickname)
+	}
+
+	if response.Email != "test@example.com" {
+		t.Errorf("expected email test@example.com, got %s", response.Email)
+	}
+}

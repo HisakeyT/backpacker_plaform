@@ -140,3 +140,37 @@ func (h *Handler) Me(c *gin.Context) {
 		Email:    user.Email,
 	})
 }
+
+func (h *Handler) UpdateMe(c *gin.Context) {
+	var input UpdateMeInput
+
+	if err := c.ShouldBindJSON(&input); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "invalid request",
+		})
+		return
+	}
+
+	userID, _ := c.Get("userID")
+
+	user, err := h.useCase.UpdateMe(userID.(uint), input)
+	if err != nil {
+		if errors.Is(err, ErrUserNotFound) {
+			c.JSON(http.StatusNotFound, gin.H{
+				"error": "user not found",
+			})
+			return
+		}
+
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": "internal server error",
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, UserResponse{
+		ID:       user.ID,
+		Nickname: user.Nickname,
+		Email:    user.Email,
+	})
+}
