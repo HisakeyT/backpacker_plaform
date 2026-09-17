@@ -41,6 +41,18 @@ func TestHandler_CreateTravel(t *testing.T) {
 			repository: &MockRepository{},
 			wantStatus: http.StatusBadRequest,
 		},
+		{
+			name:       "終了日が不正",
+			request:    `{"title":"東南アジア3週間","start_date":"2026-10-01","end_date":"2026-99-99","is_public":true}`,
+			repository: &MockRepository{},
+			wantStatus: http.StatusBadRequest,
+		},
+		{
+			name:       "開始日が終了日より後",
+			request:    `{"title":"東南アジア3週間","start_date":"2026-10-21","end_date":"2026-10-01","is_public":true}`,
+			repository: &MockRepository{},
+			wantStatus: http.StatusBadRequest,
+		},
 	}
 
 	for _, tt := range tests {

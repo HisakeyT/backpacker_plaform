@@ -1,6 +1,7 @@
 package travel
 
 import (
+	"errors"
 	"net/http"
 	"time"
 
@@ -59,6 +60,13 @@ func (h *Handler) CreateTravel(c *gin.Context) {
 
 	travel, err := h.useCase.CreateTravel(userID, input)
 	if err != nil {
+		if errors.Is(err, ErrInvalidDateRange) {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"error": err.Error(),
+			})
+			return
+		}
+
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"error": err.Error(),
 		})

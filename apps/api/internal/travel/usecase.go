@@ -1,6 +1,11 @@
 package travel
 
-import "time"
+import (
+	"errors"
+	"time"
+)
+
+var ErrInvalidDateRange = errors.New("start date must not be after end date")
 
 type UseCase struct {
 	repository Repository
@@ -20,6 +25,10 @@ type CreateTravelInput struct {
 }
 
 func (u *UseCase) CreateTravel(userID uint, input CreateTravelInput) (*Travel, error) {
+	if err := validateCreateTravelInput(input); err != nil {
+		return nil, err
+	}
+
 	travel := &Travel{
 		UserID:    userID,
 		Title:     input.Title,
@@ -34,4 +43,12 @@ func (u *UseCase) CreateTravel(userID uint, input CreateTravelInput) (*Travel, e
 
 	return travel, nil
 
+}
+
+func validateCreateTravelInput(input CreateTravelInput) error {
+	if input.StartDate.After(input.EndDate) {
+		return ErrInvalidDateRange
+	}
+
+	return nil
 }
