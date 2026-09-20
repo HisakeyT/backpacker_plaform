@@ -1,0 +1,193 @@
+package travel_plan
+
+import (
+	"net/http"
+	"net/http/httptest"
+	"strings"
+	"testing"
+
+	"github.com/HisakeyT/backpacker-platform/internal/travel"
+	"github.com/gin-gonic/gin"
+	"gorm.io/gorm"
+)
+
+func TestHandler_CreateTravelPlan(t *testing.T) {
+	gin.SetMode(gin.TestMode)
+
+	tests := []struct {
+		name            string
+		userID          uint
+		travelID        string
+		body            string
+		setupRepository func() (*MockTravelRepository, *MockRepository)
+		wantStatus      int
+	}{
+		{
+			name:     "正常に作成できる",
+			userID:   1,
+			travelID: "10",
+			body: `{
+				"date": "2026-10-01",
+				"place": "バンコク",
+				"content": "ワット・ポーを観光",
+				"sort_order": 1
+			}`,
+			setupRepository: func() (*MockTravelRepository, *MockRepository) {
+				travelRepository := &MockTravelRepository{
+					FindByIDFunc: func(id uint) (*travel.Travel, error) {
+						return &travel.Travel{
+							ID:     10,
+							UserID: 1,
+						}, nil
+					},
+				}
+
+				travelPlanRepository := &MockRepository{
+					CreateFunc: func(travelPlan *TravelPlan) error {
+						return nil
+					},
+				}
+
+				return travelRepository, travelPlanRepository
+			},
+			wantStatus: http.StatusCreated,
+		},
+		{
+			name:     "旅行が存在しない",
+			userID:   1,
+			travelID: "999",
+			body: `{
+				"date": "2026-10-01",
+				"place": "バンコク",
+				"content": "ワット・ポーを観光",
+				"sort_order": 1
+			}`,
+			setupRepository: func() (*MockTravelRepository, *MockRepository) {
+				travelRepository := &MockTravelRepository{
+					FindByIDFunc: func(id uint) (*travel.Travel, error) {
+						return nil, gorm.ErrRecordNotFound
+					},
+				}
+
+				travelPlanRepository := &MockRepository{}
+
+				return travelRepository, travelPlanRepository
+			},
+			wantStatus: http.StatusInternalServerError,
+		},
+		{
+			name:     "他人の旅行には追加できない",
+			userID:   1,
+			travelID: "10",
+			body: `{
+				"date": "2026-10-01",
+				"place": "バンコク",
+				"content": "ワット・ポーを観光",
+				"sort_order": 1
+			}`,
+			setupRepository: func() (*MockTravelRepository, *MockRepository) {
+				travelRepository := &MockTravelRepository{
+					FindByIDFunc: func(id uint) (*travel.Travel, error) {
+						return &travel.Travel{
+							ID:     10,
+							UserID: 999,
+						}, nil
+					},
+				}
+
+				travelPlanRepository := &MockRepository{}
+
+				return travelRepository, travelPlanRepository
+			},
+			wantStatus: http.StatusForbidden,
+		},
+		{
+			name:     "不正なJSON",
+			userID:   1,
+			travelID: "10",
+			body:     `{"date":`,
+			setupRepository: func() (*MockTravelRepository, *MockRepository) {
+				return &MockTravelRepository{}, &MockRepository{}
+			},
+			wantStatus: http.StatusBadRequest,
+		},
+		{
+			name:     "travel_idが不正",
+			userID:   1,
+			travelID: "abc",
+			body: `{
+				"date": "2026-10-01",
+				"place": "バンコク",
+				"content": "ワット・ポーを観光",
+				"sort_order": 1
+			}`,
+			setupRepository: func() (*MockTravelRepository, *MockRepository) {
+				return &MockTravelRepository{}, &MockRepository{}
+			},
+			wantStatus: http.StatusBadRequest,
+		},
+		{
+			name:     "dateが不正",
+			userID:   1,
+			travelID: "10",
+			body: `{
+				"date": "2026/10/01",
+				"place": "バンコク",
+				"content": "ワット・ポーを観光",
+				"sort_order": 1
+			}`,
+			setupRepository: func() (*MockTravelRepository, *MockRepository) {
+				return &MockTravelRepository{
+					FindByIDFunc: func(id uint) (*travel.Travel, error) {
+						return &travel.Travel{
+							ID:     10,
+							UserID: 1,
+						}, nil
+					},
+				}, &MockRepository{}
+			},
+			wantStatus: http.StatusBadRequest,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			travelRepository, travelPlanRepository := tt.setupRepository()
+
+			useCase := NewUseCase(
+				travelRepository,
+				travelPlanRepository,
+			)
+
+			handler := NewHandler(useCase)
+
+			recorder := httptest.NewRecorder()
+			c, _ := gin.CreateTestContext(recorder)
+
+			c.Params = gin.Params{
+				{
+					Key:   "travel_id",
+					Value: tt.travelID,
+				},
+			}
+			c.Set("userID", tt.userID)
+
+			c.Request = httptest.NewRequest(
+				http.MethodPost,
+				"/travels/"+tt.travelID+"/plans",
+				strings.NewReader(tt.body),
+			)
+			c.Request.Header.Set("Content-Type", "application/json")
+
+			handler.CreateTravelPlan(c)
+
+			if recorder.Code != tt.wantStatus {
+				t.Errorf(
+					"status = %d, want %d",
+					recorder.Code,
+					tt.wantStatus,
+				)
+			}
+		})
+	}
+}
