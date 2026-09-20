@@ -2,9 +2,8 @@ package travel_plan
 
 import (
 	"errors"
-	"time"
-
 	"github.com/HisakeyT/backpacker-platform/internal/travel"
+	"time"
 )
 
 var ErrUserNotAuthorized = errors.New("user does not have permission to create a travel plan for this travel")
