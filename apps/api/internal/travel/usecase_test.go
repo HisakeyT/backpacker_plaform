@@ -29,7 +29,7 @@ func TestUseCase_CreateTravel(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			repository := &MockRepository{
-				CreateTravelFunc: func(travel *Travel) error {
+				CreateFunc: func(travel *Travel) error {
 					travel.ID = 1
 					return nil
 				},

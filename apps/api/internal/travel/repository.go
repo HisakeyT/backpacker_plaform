@@ -1,6 +1,6 @@
 package travel
 
 type Repository interface {
-	CreateTravel(travel *Travel) error
+	Create(travel *Travel) error
 	FindByID(id uint) (*Travel, error)
 }

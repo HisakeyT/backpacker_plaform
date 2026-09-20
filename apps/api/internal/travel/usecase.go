@@ -37,7 +37,7 @@ func (u *UseCase) CreateTravel(userID uint, input CreateTravelInput) (*Travel, e
 		IsPublic:  input.IsPublic,
 	}
 
-	if err := u.repository.CreateTravel(travel); err != nil {
+	if err := u.repository.Create(travel); err != nil {
 		return nil, err
 	}
 
