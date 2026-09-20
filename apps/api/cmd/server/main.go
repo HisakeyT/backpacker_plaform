@@ -8,6 +8,8 @@ import (
 
 	"github.com/HisakeyT/backpacker-platform/internal/auth"
 	"github.com/HisakeyT/backpacker-platform/internal/database"
+	"github.com/HisakeyT/backpacker-platform/internal/travel"
+	"github.com/HisakeyT/backpacker-platform/internal/travel_plan"
 	"github.com/HisakeyT/backpacker-platform/internal/user"
 )
 
@@ -23,6 +25,14 @@ func main() {
 	userRepository := user.NewGormRepository(db)
 	userUseCase := user.NewUseCase(userRepository, jwtManager)
 	userHandler := user.NewHandler(userUseCase)
+
+	travelRepository := travel.NewGormRepository(db)
+	travelUseCase := travel.NewUseCase(travelRepository)
+	travelHandler := travel.NewHandler(travelUseCase)
+
+	travelPlanRepository := travel_plan.NewGormRepository(db)
+	travelPlanUseCase := travel_plan.NewUseCase(travelRepository, travelPlanRepository)
+	travelPlanHandler := travel_plan.NewHandler(travelPlanUseCase)
 
 	r := gin.Default()
 
@@ -40,6 +50,12 @@ func main() {
 	{
 		protected.GET("/me", userHandler.Me)
 		protected.PATCH("me", userHandler.UpdateMe)
+	}
+
+	travels := protected.Group("/travels")
+	{
+		travels.POST("", travelHandler.CreateTravel)
+		travels.POST("/:travel_id/plans", travelPlanHandler.CreateTravelPlan)
 	}
 
 	if err := r.Run(":8080"); err != nil {
