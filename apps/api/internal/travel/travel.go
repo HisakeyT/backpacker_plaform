@@ -1,6 +1,11 @@
 package travel
 
-import "time"
+import (
+	"errors"
+	"time"
+)
+
+var ErrTravelNotFound = errors.New("travel not found")
 
 type Travel struct {
 	ID        uint      `gorm:"primaryKey"`
