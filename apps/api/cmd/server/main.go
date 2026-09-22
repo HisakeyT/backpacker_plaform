@@ -45,18 +45,14 @@ func main() {
 	r.POST("/register", userHandler.Register)
 	r.POST("/login", userHandler.Login)
 
-	protected := r.Group("/users")
+	protected := r.Group("")
 	protected.Use(auth.AuthMiddleware(jwtManager))
-	{
-		protected.GET("/me", userHandler.Me)
-		protected.PATCH("me", userHandler.UpdateMe)
-	}
 
-	travels := protected.Group("/travels")
-	{
-		travels.POST("", travelHandler.CreateTravel)
-		travels.POST("/:travel_id/plans", travelPlanHandler.CreateTravelPlan)
-	}
+	protected.GET("/users/me", userHandler.Me)
+	protected.PATCH("/users/me", userHandler.UpdateMe)
+
+	protected.POST("/travels", travelHandler.CreateTravel)
+	protected.POST("/travels/:travel_id/plans", travelPlanHandler.CreateTravelPlan)
 
 	if err := r.Run(":8080"); err != nil {
 		log.Fatal(err)
