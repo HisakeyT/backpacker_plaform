@@ -91,3 +91,39 @@ func (h *Handler) CreateTravelPlan(c *gin.Context) {
 
 	c.JSON(http.StatusCreated, travelPlan)
 }
+
+func (h *Handler) GetTravelPlans(c *gin.Context) {
+	userID := c.GetUint("userID")
+
+	travelID, err := strconv.ParseUint(c.Param("travel_id"), 10, 64)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "invalid travel_id",
+		})
+		return
+	}
+
+	travelPlans, err := h.useCase.GetTravelPlans(userID, uint(travelID))
+	if err != nil {
+		if errors.Is(err, travel.ErrTravelNotFound) {
+			c.JSON(http.StatusNotFound, gin.H{
+				"error": err.Error(),
+			})
+			return
+		}
+
+		if errors.Is(err, user.ErrUserNotAuthorized) {
+			c.JSON(http.StatusForbidden, gin.H{
+				"error": err.Error(),
+			})
+			return
+		}
+
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, travelPlans)
+}
