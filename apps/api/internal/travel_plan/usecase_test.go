@@ -35,11 +35,8 @@ func TestUseCase_CreateTravelPlan(t *testing.T) {
 			},
 		}
 
-		var got *TravelPlan
-
 		travelPlanRepository := &MockRepository{
 			CreateFunc: func(travelPlan *TravelPlan) error {
-				got = travelPlan
 				return nil
 			},
 		}
@@ -50,31 +47,30 @@ func TestUseCase_CreateTravelPlan(t *testing.T) {
 		)
 
 		// Act
-		err := useCase.CreateTravelPlan(userID, travelID, input)
+		travelPlan, err := useCase.CreateTravelPlan(userID, travelID, input)
 
-		// Assert
 		if err != nil {
 			t.Fatalf("unexpected error: %v", err)
 		}
 
-		if got.TravelID != travelID {
-			t.Errorf("TravelID = %d, want %d", got.TravelID, travelID)
+		if travelPlan.TravelID != travelID {
+			t.Errorf("TravelID = %d, want %d", travelPlan.TravelID, travelID)
 		}
 
-		if !got.Date.Equal(input.Date) {
-			t.Errorf("Date = %v, want %v", got.Date, input.Date)
+		if !travelPlan.Date.Equal(input.Date) {
+			t.Errorf("Date = %v, want %v", travelPlan.Date, input.Date)
 		}
 
-		if got.Place != input.Place {
-			t.Errorf("Place = %s, want %s", got.Place, input.Place)
+		if travelPlan.Place != input.Place {
+			t.Errorf("Place = %s, want %s", travelPlan.Place, input.Place)
 		}
 
-		if got.Content != input.Content {
-			t.Errorf("Content = %s, want %s", got.Content, input.Content)
+		if travelPlan.Content != input.Content {
+			t.Errorf("Content = %s, want %s", travelPlan.Content, input.Content)
 		}
 
-		if got.SortOrder != input.SortOrder {
-			t.Errorf("SortOrder = %d, want %d", got.SortOrder, input.SortOrder)
+		if travelPlan.SortOrder != input.SortOrder {
+			t.Errorf("SortOrder = %d, want %d", travelPlan.SortOrder, input.SortOrder)
 		}
 	})
 }
@@ -134,7 +130,7 @@ func TestUseCase_CreateTravelPlan_Invalid(t *testing.T) {
 				SortOrder: 1,
 			}
 
-			err := useCase.CreateTravelPlan(
+			_, err := useCase.CreateTravelPlan(
 				tt.userID,
 				tt.travelID,
 				input,

@@ -62,11 +62,13 @@ func (h *Handler) CreateTravelPlan(c *gin.Context) {
 		SortOrder: req.SortOrder,
 	}
 
-	if err := h.useCase.CreateTravelPlan(
+	travelPlan, err := h.useCase.CreateTravelPlan(
 		userID,
 		uint(travelID),
 		input,
-	); err != nil {
+	)
+
+	if err != nil {
 		if errors.Is(err, travel.ErrTravelNotFound) {
 			c.JSON(http.StatusNotFound, gin.H{
 				"error": err.Error(),
@@ -87,5 +89,5 @@ func (h *Handler) CreateTravelPlan(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusCreated, gin.H{})
+	c.JSON(http.StatusCreated, travelPlan)
 }

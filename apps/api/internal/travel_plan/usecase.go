@@ -35,17 +35,17 @@ type CreateTravelPlanInput struct {
 	SortOrder int
 }
 
-func (uc *UseCase) CreateTravelPlan(userID, travelID uint, input CreateTravelPlanInput) error {
+func (uc *UseCase) CreateTravelPlan(userID, travelID uint, input CreateTravelPlanInput) (*TravelPlan, error) {
 	travelData, err := uc.travelRepository.FindByID(travelID)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return travel.ErrTravelNotFound
+			return nil, travel.ErrTravelNotFound
 		}
-		return err
+		return nil, err
 	}
 
 	if travelData.UserID != userID {
-		return user.ErrUserNotAuthorized
+		return nil, user.ErrUserNotAuthorized
 	}
 	travelPlan := &TravelPlan{
 		TravelID:  travelID,
@@ -55,5 +55,9 @@ func (uc *UseCase) CreateTravelPlan(userID, travelID uint, input CreateTravelPla
 		SortOrder: input.SortOrder,
 	}
 
-	return uc.travelPlanRepository.Create(travelPlan)
+	if uc.travelPlanRepository.Create(travelPlan); err != nil {
+		return nil, err
+	}
+
+	return travelPlan, nil
 }
