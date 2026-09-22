@@ -53,6 +53,7 @@ func main() {
 
 	protected.POST("/travels", travelHandler.CreateTravel)
 	protected.POST("/travels/:travel_id/plans", travelPlanHandler.CreateTravelPlan)
+	protected.GET("/travels/:travel_id/plans", travelPlanHandler.GetTravelPlans)
 
 	if err := r.Run(":8080"); err != nil {
 		log.Fatal(err)
