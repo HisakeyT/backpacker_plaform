@@ -3,10 +3,11 @@ package travel_plan
 import (
 	"errors"
 	"github.com/HisakeyT/backpacker-platform/internal/travel"
+	"github.com/HisakeyT/backpacker-platform/internal/user"
 	"time"
-)
 
-var ErrUserNotAuthorized = errors.New("user does not have permission to create a travel plan for this travel")
+	"gorm.io/gorm"
+)
 
 type TravelRepository interface {
 	FindByID(id uint) (*travel.Travel, error)
@@ -37,11 +38,14 @@ type CreateTravelPlanInput struct {
 func (uc *UseCase) CreateTravelPlan(userID, travelID uint, input CreateTravelPlanInput) error {
 	travelData, err := uc.travelRepository.FindByID(travelID)
 	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return travel.ErrTravelNotFound
+		}
 		return err
 	}
 
 	if travelData.UserID != userID {
-		return ErrUserNotAuthorized
+		return user.ErrUserNotAuthorized
 	}
 	travelPlan := &TravelPlan{
 		TravelID:  travelID,

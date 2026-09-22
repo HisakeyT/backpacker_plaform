@@ -6,6 +6,8 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/HisakeyT/backpacker-platform/internal/travel"
+	"github.com/HisakeyT/backpacker-platform/internal/user"
 	"github.com/gin-gonic/gin"
 )
 
@@ -65,7 +67,14 @@ func (h *Handler) CreateTravelPlan(c *gin.Context) {
 		uint(travelID),
 		input,
 	); err != nil {
-		if errors.Is(err, ErrUserNotAuthorized) {
+		if errors.Is(err, travel.ErrTravelNotFound) {
+			c.JSON(http.StatusNotFound, gin.H{
+				"error": err.Error(),
+			})
+			return
+		}
+
+		if errors.Is(err, user.ErrUserNotAuthorized) {
 			c.JSON(http.StatusForbidden, gin.H{
 				"error": err.Error(),
 			})

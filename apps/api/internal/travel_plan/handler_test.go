@@ -73,7 +73,7 @@ func TestHandler_CreateTravelPlan(t *testing.T) {
 
 				return travelRepository, travelPlanRepository
 			},
-			wantStatus: http.StatusInternalServerError,
+			wantStatus: http.StatusNotFound,
 		},
 		{
 			name:     "他人の旅行には追加できない",
