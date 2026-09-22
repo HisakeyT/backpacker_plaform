@@ -61,3 +61,24 @@ func (uc *UseCase) CreateTravelPlan(userID, travelID uint, input CreateTravelPla
 
 	return travelPlan, nil
 }
+
+func (uc *UseCase) GetTravelPlans(userID, travelID uint) ([]TravelPlan, error) {
+	travelData, err := uc.travelRepository.FindByID(travelID)
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, travel.ErrTravelNotFound
+		}
+		return nil, err
+	}
+
+	if travelData.UserID != userID {
+		return nil, user.ErrUserNotAuthorized
+	}
+
+	travelPlans, err := uc.travelPlanRepository.FindByTravelID(travelID)
+	if err != nil {
+		return nil, err
+	}
+
+	return travelPlans, nil
+}
