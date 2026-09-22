@@ -5,7 +5,8 @@ import (
 )
 
 type MockRepository struct {
-	CreateFunc func(travelPlan *TravelPlan) error
+	CreateFunc         func(travelPlan *TravelPlan) error
+	FindByTravelIDFunc func(travelID uint) ([]TravelPlan, error)
 }
 
 func (m *MockRepository) Create(travelPlan *TravelPlan) error {
@@ -13,6 +14,14 @@ func (m *MockRepository) Create(travelPlan *TravelPlan) error {
 		return m.CreateFunc(travelPlan)
 	}
 	return nil
+}
+
+func (m *MockRepository) FindByTravelID(travelID uint) ([]TravelPlan, error) {
+	if m.FindByTravelIDFunc != nil {
+		return m.FindByTravelIDFunc(travelID)
+	}
+
+	return nil, nil
 }
 
 type MockTravelRepository struct {
