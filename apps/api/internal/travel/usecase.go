@@ -52,3 +52,12 @@ func validateCreateTravelInput(input CreateTravelInput) error {
 
 	return nil
 }
+
+func (u *UseCase) GetTravels(userID uint) ([]*Travel, error) {
+	travels, err := u.repository.FindByUserID(userID)
+	if err != nil {
+		return nil, err
+	}
+
+	return travels, nil
+}

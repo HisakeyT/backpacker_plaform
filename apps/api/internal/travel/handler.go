@@ -79,3 +79,17 @@ func (h *Handler) CreateTravel(c *gin.Context) {
 func parseDate(dateStr string) (time.Time, error) {
 	return time.Parse("2006-01-02", dateStr)
 }
+
+func (h *Handler) GetTravels(c *gin.Context) {
+	userID := c.MustGet("userID").(uint)
+
+	travels, err := h.useCase.GetTravels(userID)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, travels)
+}
