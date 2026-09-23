@@ -23,3 +23,13 @@ func (r *GormRepository) FindByID(id uint) (*Travel, error) {
 
 	return &travel, nil
 }
+
+func (r *GormRepository) FindByUserID(userID uint) ([]*Travel, error) {
+	var travels []*Travel
+
+	if err := r.db.Where("user_id = ?", userID).Find(&travels).Error; err != nil {
+		return nil, err
+	}
+
+	return travels, nil
+}
