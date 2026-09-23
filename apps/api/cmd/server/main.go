@@ -53,6 +53,7 @@ func main() {
 
 	protected.POST("/travels", travelHandler.CreateTravel)
 	protected.GET("/travels", travelHandler.GetTravels)
+	protected.GET("/travels/:travel_id", travelHandler.GetTravel)
 
 	protected.POST("/travels/:travel_id/plans", travelPlanHandler.CreateTravelPlan)
 	protected.GET("/travels/:travel_id/plans", travelPlanHandler.GetTravelPlans)

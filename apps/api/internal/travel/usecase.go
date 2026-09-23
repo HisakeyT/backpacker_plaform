@@ -2,7 +2,10 @@ package travel
 
 import (
 	"errors"
+	"gorm.io/gorm"
 	"time"
+
+	"github.com/HisakeyT/backpacker-platform/internal/user"
 )
 
 var ErrInvalidDateRange = errors.New("start date must not be after end date")
@@ -60,4 +63,20 @@ func (u *UseCase) GetTravels(userID uint) ([]*Travel, error) {
 	}
 
 	return travels, nil
+}
+
+func (u *UseCase) GetTravel(userID uint, travelID uint) (*Travel, error) {
+	travel, err := u.repository.FindByID(travelID)
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, ErrTravelNotFound
+		}
+		return nil, err
+	}
+
+	if travel.UserID != userID {
+		return nil, user.ErrUserNotAuthorized
+	}
+
+	return travel, nil
 }

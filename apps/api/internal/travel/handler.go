@@ -3,8 +3,10 @@ package travel
 import (
 	"errors"
 	"net/http"
+	"strconv"
 	"time"
 
+	"github.com/HisakeyT/backpacker-platform/internal/user"
 	"github.com/gin-gonic/gin"
 )
 
@@ -92,4 +94,45 @@ func (h *Handler) GetTravels(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, travels)
+}
+
+func (h *Handler) GetTravel(c *gin.Context) {
+	userID := c.MustGet("userID").(uint)
+
+	travelIDStr := c.Param("travel_id")
+	travelID64, err := strconv.ParseUint(travelIDStr, 10, 64)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "Invalid travel ID",
+		})
+
+		return
+	}
+
+	travelID := uint(travelID64)
+
+	travel, err := h.useCase.GetTravel(userID, travelID)
+	if err != nil {
+		if errors.Is(err, ErrTravelNotFound) {
+			c.JSON(http.StatusNotFound, gin.H{
+				"error": err.Error(),
+			})
+			return
+		}
+
+		if errors.Is(err, user.ErrUserNotAuthorized) {
+			c.JSON(http.StatusForbidden, gin.H{
+				"error": err.Error(),
+			})
+			return
+		}
+
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": err.Error(),
+		})
+
+		return
+	}
+
+	c.JSON(http.StatusOK, travel)
 }
