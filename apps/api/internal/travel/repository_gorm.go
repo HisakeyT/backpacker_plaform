@@ -33,3 +33,7 @@ func (r *GormRepository) FindByUserID(userID uint) ([]*Travel, error) {
 
 	return travels, nil
 }
+
+func (r *GormRepository) Update(travel *Travel) error {
+	return r.db.Save(travel).Error
+}

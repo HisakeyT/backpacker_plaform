@@ -4,6 +4,7 @@ type MockRepository struct {
 	CreateFunc       func(travel *Travel) error
 	FindByIDFunc     func(id uint) (*Travel, error)
 	FindByUserIDFunc func(userID uint) ([]*Travel, error)
+	UpdateFunc       func(travel *Travel) error
 }
 
 func (m *MockRepository) Create(travel *Travel) error {
@@ -27,4 +28,12 @@ func (m *MockRepository) FindByUserID(userID uint) ([]*Travel, error) {
 	}
 
 	return nil, nil
+}
+
+func (m *MockRepository) Update(travel *Travel) error {
+	if m.UpdateFunc != nil {
+		return m.UpdateFunc(travel)
+	}
+
+	return nil
 }
