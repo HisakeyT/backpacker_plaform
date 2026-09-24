@@ -136,3 +136,102 @@ func (h *Handler) GetTravel(c *gin.Context) {
 
 	c.JSON(http.StatusOK, travel)
 }
+
+type UpdateTravelRequest struct {
+	Title     *string `json:"title"`
+	StartDate *string `json:"start_date"`
+	EndDate   *string `json:"end_date"`
+	IsPublic  *bool   `json:"is_public"`
+}
+
+func (h *Handler) UpdateTravel(c *gin.Context) {
+	var updateReq UpdateTravelRequest
+
+	if err := c.ShouldBindJSON(&updateReq); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	userID := c.MustGet("userID").(uint)
+
+	travelIDStr := c.Param("travel_id")
+	travelID64, err := strconv.ParseUint(travelIDStr, 10, 64)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "Invalid travel ID",
+		})
+
+		return
+	}
+	travelID := uint(travelID64)
+
+	startDate, err := parseOptionalDate(updateReq.StartDate)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "Invalid start date format",
+		})
+		return
+	}
+
+	endDate, err := parseOptionalDate(updateReq.EndDate)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "Invalid end date format",
+		})
+		return
+	}
+
+	input := UpdateTravelInput{
+		Title:     updateReq.Title,
+		StartDate: startDate,
+		EndDate:   endDate,
+		IsPublic:  updateReq.IsPublic,
+	}
+
+	travel, err := h.useCase.UpdateTravel(userID, travelID, input)
+	if err != nil {
+		if errors.Is(err, ErrTravelNotFound) {
+			c.JSON(http.StatusNotFound, gin.H{
+				"error": err.Error(),
+			})
+			return
+		}
+
+		if errors.Is(err, user.ErrUserNotAuthorized) {
+			c.JSON(http.StatusForbidden, gin.H{
+				"error": err.Error(),
+			})
+			return
+		}
+
+		if errors.Is(err, ErrInvalidDateRange) {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"error": err.Error(),
+			})
+			return
+		}
+
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": err.Error(),
+		})
+
+		return
+	}
+
+	c.JSON(http.StatusOK, travel)
+}
+
+func parseOptionalDate(value *string) (*time.Time, error) {
+	if value == nil {
+		return nil, nil
+	}
+
+	parsed, err := parseDate(*value)
+	if err != nil {
+		return nil, err
+	}
+
+	return &parsed, nil
+}
