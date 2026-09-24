@@ -52,6 +52,7 @@ func main() {
 	protected.PATCH("/users/me", userHandler.UpdateMe)
 
 	protected.POST("/travels", travelHandler.CreateTravel)
+	protected.PATCH("/travels/:travel_id", travelHandler.UpdateTravel)
 	protected.GET("/travels", travelHandler.GetTravels)
 	protected.GET("/travels/:travel_id", travelHandler.GetTravel)
 
