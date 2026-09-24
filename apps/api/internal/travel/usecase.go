@@ -28,7 +28,7 @@ type CreateTravelInput struct {
 }
 
 func (u *UseCase) CreateTravel(userID uint, input CreateTravelInput) (*Travel, error) {
-	if err := validateCreateTravelInput(input); err != nil {
+	if err := validateTravelDateRange(input.StartDate, input.EndDate); err != nil {
 		return nil, err
 	}
 
@@ -48,8 +48,8 @@ func (u *UseCase) CreateTravel(userID uint, input CreateTravelInput) (*Travel, e
 
 }
 
-func validateCreateTravelInput(input CreateTravelInput) error {
-	if input.StartDate.After(input.EndDate) {
+func validateTravelDateRange(startDate, endDate time.Time) error {
+	if startDate.After(endDate) {
 		return ErrInvalidDateRange
 	}
 
@@ -79,4 +79,55 @@ func (u *UseCase) GetTravel(userID uint, travelID uint) (*Travel, error) {
 	}
 
 	return travel, nil
+}
+
+type UpdateTravelInput struct {
+	Title     *string    `json:"title"`
+	StartDate *time.Time `json:"start_date"`
+	EndDate   *time.Time `json:"end_date"`
+	IsPublic  *bool      `json:"is_public"`
+}
+
+func (u *UseCase) UpdateTravel(userID uint, travelID uint, input UpdateTravelInput) (*Travel, error) {
+	travel, err := u.repository.FindByID(travelID)
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, ErrTravelNotFound
+		}
+		return nil, err
+	}
+
+	if travel.UserID != userID {
+		return nil, user.ErrUserNotAuthorized
+	}
+
+	applyUpdate(travel, input)
+
+	if err := validateTravelDateRange(travel.StartDate, travel.EndDate); err != nil {
+		return nil, err
+	}
+
+	if err := u.repository.Update(travel); err != nil {
+		return nil, err
+	}
+
+	return travel, nil
+}
+
+func applyUpdate(travel *Travel, input UpdateTravelInput) {
+	if input.Title != nil {
+		travel.Title = *input.Title
+	}
+
+	if input.StartDate != nil {
+		travel.StartDate = *input.StartDate
+	}
+
+	if input.EndDate != nil {
+		travel.EndDate = *input.EndDate
+	}
+
+	if input.IsPublic != nil {
+		travel.IsPublic = *input.IsPublic
+	}
 }
