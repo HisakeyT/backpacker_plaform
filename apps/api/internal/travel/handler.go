@@ -137,6 +137,18 @@ func (h *Handler) GetTravel(c *gin.Context) {
 	c.JSON(http.StatusOK, travel)
 }
 
+func (h *Handler) GetPublicTravels(c *gin.Context) {
+	travels, err := h.useCase.GetPublicTravels()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": "failed to get public travels",
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, travels)
+}
+
 type UpdateTravelRequest struct {
 	Title     *string `json:"title"`
 	StartDate *string `json:"start_date"`

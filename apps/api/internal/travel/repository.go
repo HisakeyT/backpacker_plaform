@@ -5,4 +5,5 @@ type Repository interface {
 	FindByID(id uint) (*Travel, error)
 	FindByUserID(userID uint) ([]*Travel, error)
 	Update(travel *Travel) error
+	FindPublicTravels() ([]*Travel, error)
 }

@@ -1,10 +1,11 @@
 package travel
 
 type MockRepository struct {
-	CreateFunc       func(travel *Travel) error
-	FindByIDFunc     func(id uint) (*Travel, error)
-	FindByUserIDFunc func(userID uint) ([]*Travel, error)
-	UpdateFunc       func(travel *Travel) error
+	CreateFunc            func(travel *Travel) error
+	FindByIDFunc          func(id uint) (*Travel, error)
+	FindByUserIDFunc      func(userID uint) ([]*Travel, error)
+	UpdateFunc            func(travel *Travel) error
+	FindPublicTravelsFunc func() ([]*Travel, error)
 }
 
 func (m *MockRepository) Create(travel *Travel) error {
@@ -36,4 +37,12 @@ func (m *MockRepository) Update(travel *Travel) error {
 	}
 
 	return nil
+}
+
+func (m *MockRepository) FindPublicTravels() ([]*Travel, error) {
+	if m.FindPublicTravelsFunc != nil {
+		return m.FindPublicTravelsFunc()
+	}
+
+	return nil, nil
 }

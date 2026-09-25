@@ -56,6 +56,10 @@ func validateTravelDateRange(startDate, endDate time.Time) error {
 	return nil
 }
 
+func (u *UseCase) GetPublicTravels() ([]*Travel, error) {
+	return u.repository.FindPublicTravels()
+}
+
 func (u *UseCase) GetTravels(userID uint) ([]*Travel, error) {
 	travels, err := u.repository.FindByUserID(userID)
 	if err != nil {

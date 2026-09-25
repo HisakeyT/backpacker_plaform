@@ -55,6 +55,7 @@ func main() {
 	protected.PATCH("/travels/:travel_id", travelHandler.UpdateTravel)
 	protected.GET("/travels", travelHandler.GetTravels)
 	protected.GET("/travels/:travel_id", travelHandler.GetTravel)
+	protected.GET("/travels/public", travelHandler.GetPublicTravels)
 
 	protected.POST("/travels/:travel_id/plans", travelPlanHandler.CreateTravelPlan)
 	protected.PATCH("/travels/:travel_id/plans/:travel_plan_id", travelPlanHandler.UpdateTravelPlan)

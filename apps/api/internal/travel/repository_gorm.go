@@ -37,3 +37,13 @@ func (r *GormRepository) FindByUserID(userID uint) ([]*Travel, error) {
 func (r *GormRepository) Update(travel *Travel) error {
 	return r.db.Save(travel).Error
 }
+
+func (r *GormRepository) FindPublicTravels() ([]*Travel, error) {
+	var travels []*Travel
+
+	if err := r.db.Where("is_public = ?", true).Find(&travels).Error; err != nil {
+		return nil, err
+	}
+
+	return travels, nil
+}
