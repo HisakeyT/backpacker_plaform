@@ -14,6 +14,21 @@ func (r *GormRepository) Create(travelPlan *TravelPlan) error {
 	return r.db.Create(travelPlan).Error
 }
 
+func (r *GormRepository) Update(travelPlan *TravelPlan) error {
+	return r.db.Save(travelPlan).Error
+}
+
+func (r *GormRepository) FindByID(id uint) (*TravelPlan, error) {
+	var travelPlan TravelPlan
+
+	result := r.db.First(&travelPlan, id)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+
+	return &travelPlan, nil
+}
+
 func (r *GormRepository) FindByTravelID(travelID uint) ([]TravelPlan, error) {
 	var travelPlans []TravelPlan
 

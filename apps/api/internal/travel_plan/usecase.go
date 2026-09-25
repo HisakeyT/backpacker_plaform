@@ -82,3 +82,63 @@ func (uc *UseCase) GetTravelPlans(userID, travelID uint) ([]TravelPlan, error) {
 
 	return travelPlans, nil
 }
+
+type UpdateTravelPlanInput struct {
+	Date      *time.Time
+	Place     *string
+	Content   *string
+	SortOrder *int
+}
+
+func (uc *UseCase) UpdateTravelPlan(userID, travelID, travelPlanID uint, input UpdateTravelPlanInput) (*TravelPlan, error) {
+	travelData, err := uc.travelRepository.FindByID(travelID)
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, travel.ErrTravelNotFound
+		}
+		return nil, err
+	}
+
+	if travelData.UserID != userID {
+		return nil, user.ErrUserNotAuthorized
+	}
+
+	travelPlan, err := uc.travelPlanRepository.FindByID(travelPlanID)
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, ErrTravelPlanNotFound
+		}
+
+		return nil, err
+	}
+
+	if travelPlan.TravelID != travelID {
+		return nil, ErrTravelPlanNotBelongToTravel
+	}
+
+	applyTravelPlanUpdates(travelPlan, input)
+
+	if err := uc.travelPlanRepository.Update(travelPlan); err != nil {
+		return nil, err
+	}
+
+	return travelPlan, nil
+}
+
+func applyTravelPlanUpdates(travelPlan *TravelPlan, input UpdateTravelPlanInput) {
+	if input.Date != nil {
+		travelPlan.Date = *input.Date
+	}
+
+	if input.Place != nil {
+		travelPlan.Place = *input.Place
+	}
+
+	if input.Content != nil {
+		travelPlan.Content = *input.Content
+	}
+
+	if input.SortOrder != nil {
+		travelPlan.SortOrder = *input.SortOrder
+	}
+}

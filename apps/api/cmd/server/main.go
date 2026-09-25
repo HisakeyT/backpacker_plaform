@@ -57,6 +57,7 @@ func main() {
 	protected.GET("/travels/:travel_id", travelHandler.GetTravel)
 
 	protected.POST("/travels/:travel_id/plans", travelPlanHandler.CreateTravelPlan)
+	protected.PATCH("/travels/:travel_id/plans/:travel_plan_id", travelPlanHandler.UpdateTravelPlan)
 	protected.GET("/travels/:travel_id/plans", travelPlanHandler.GetTravelPlans)
 
 	if err := r.Run(":8080"); err != nil {

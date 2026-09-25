@@ -1,6 +1,14 @@
 package travel_plan
 
-import "time"
+import (
+	"errors"
+	"time"
+)
+
+var (
+	ErrTravelPlanNotFound          = errors.New("travel plan not found")
+	ErrTravelPlanNotBelongToTravel = errors.New("travel plan does not belong to the specified travel")
+)
 
 type TravelPlan struct {
 	ID        uint      `gorm:"primaryKey"`
