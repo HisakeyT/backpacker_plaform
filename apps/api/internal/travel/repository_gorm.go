@@ -47,3 +47,13 @@ func (r *GormRepository) FindPublicTravels() ([]*Travel, error) {
 
 	return travels, nil
 }
+
+func (r *GormRepository) FindPublicByID(id uint) (*Travel, error) {
+	var travel Travel
+
+	if err := r.db.Where("is_public = ?", true).First(&travel, id).Error; err != nil {
+		return nil, err
+	}
+
+	return &travel, nil
+}

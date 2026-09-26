@@ -60,6 +60,11 @@ func (u *UseCase) GetPublicTravels() ([]*Travel, error) {
 	return u.repository.FindPublicTravels()
 }
 
+// ロジックがないので、テストは書かない
+func (u *UseCase) GetPublicTravel(travelID uint) (*Travel, error) {
+	return u.repository.FindPublicByID(travelID)
+}
+
 func (u *UseCase) GetTravels(userID uint) ([]*Travel, error) {
 	travels, err := u.repository.FindByUserID(userID)
 	if err != nil {

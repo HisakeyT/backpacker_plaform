@@ -46,3 +46,11 @@ func (m *MockRepository) FindPublicTravels() ([]*Travel, error) {
 
 	return nil, nil
 }
+
+func (m *MockRepository) FindPublicByID(id uint) (*Travel, error) {
+	if m.FindPublicByID != nil {
+		return m.FindPublicByID(id)
+	}
+
+	return nil, nil
+}
