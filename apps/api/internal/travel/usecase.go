@@ -140,3 +140,24 @@ func applyUpdate(travel *Travel, input UpdateTravelInput) {
 		travel.IsPublic = *input.IsPublic
 	}
 }
+
+func (u *UseCase) DeleteTravel(userID uint, travelID uint) error {
+	travel, err := u.repository.FindByID(travelID)
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return ErrTravelNotFound
+		}
+
+		return err
+	}
+
+	if travel.UserID != userID {
+		return user.ErrUserNotAuthorized
+	}
+
+	if err := u.repository.Delete(travelID); err != nil {
+		return err
+	}
+
+	return nil
+}

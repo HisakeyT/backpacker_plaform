@@ -278,3 +278,42 @@ func parseOptionalDate(value *string) (*time.Time, error) {
 
 	return &parsed, nil
 }
+
+func (h *Handler) DeleteTravel(c *gin.Context) {
+	userID := c.MustGet("userID").(uint)
+
+	travelIDStr := c.Param("travel_id")
+	travelID64, err := strconv.ParseUint(travelIDStr, 10, 64)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "Invalid travel ID",
+		})
+
+		return
+	}
+
+	travelID := uint(travelID64)
+
+	if err := h.useCase.DeleteTravel(userID, travelID); err != nil {
+		if errors.Is(err, ErrTravelNotFound) {
+			c.JSON(http.StatusNotFound, gin.H{
+				"error": err.Error(),
+			})
+			return
+		}
+
+		if errors.Is(err, user.ErrUserNotAuthorized) {
+			c.JSON(http.StatusForbidden, gin.H{
+				"error": err.Error(),
+			})
+			return
+		}
+
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusNoContent, gin.H{})
+}

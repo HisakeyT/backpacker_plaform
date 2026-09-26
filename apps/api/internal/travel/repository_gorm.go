@@ -57,3 +57,11 @@ func (r *GormRepository) FindPublicByID(id uint) (*Travel, error) {
 
 	return &travel, nil
 }
+
+func (r *GormRepository) Delete(id uint) error {
+	if err := r.db.Delete(&Travel{}, id).Error; err != nil {
+		return err
+	}
+
+	return nil
+}
