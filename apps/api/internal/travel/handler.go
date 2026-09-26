@@ -149,6 +149,7 @@ func (h *Handler) GetPublicTravels(c *gin.Context) {
 	c.JSON(http.StatusOK, travels)
 }
 
+// ロジックないので、テストは書かない
 func (h *Handler) GetPublicTravel(c *gin.Context) {
 	travelIDStr := c.Param("travel_id")
 	travelID64, err := strconv.ParseUint(travelIDStr, 10, 64)
