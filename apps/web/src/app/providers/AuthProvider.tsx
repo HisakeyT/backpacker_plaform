@@ -5,7 +5,7 @@ import {
   useState,
 } from "react";
 
-import { login as loginApi } from "../../features/auth/api";
+import { login as loginApi } from "../../features/auth/repository";
 
 type User = {
   id: number;
