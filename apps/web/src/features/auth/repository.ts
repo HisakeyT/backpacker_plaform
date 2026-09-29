@@ -1,16 +1,4 @@
-export type LoginRequest = {
-  email: string;
-  password: string;
-};
-
-export type LoginResponse = {
-  token: string;
-  user: {
-    id: number;
-    nickname: string;
-    email: string;
-  };
-};
+import type { LoginRequest, LoginResponse, User } from "./types";
 
 export async function login(
   input: LoginRequest,
@@ -25,6 +13,20 @@ export async function login(
 
   if (!response.ok) {
     throw new Error("Login failed");
+  }
+
+  return response.json();
+}
+
+export async function getMe(token: string): Promise<User> {
+  const response = await fetch("/api/users/me", {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to get current user");
   }
 
   return response.json();
