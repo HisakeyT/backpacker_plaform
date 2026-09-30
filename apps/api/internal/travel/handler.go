@@ -6,6 +6,7 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/HisakeyT/backpacker-platform/internal/response"
 	"github.com/HisakeyT/backpacker-platform/internal/user"
 	"github.com/gin-gonic/gin"
 )
@@ -75,7 +76,7 @@ func (h *Handler) CreateTravel(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusCreated, travel)
+	c.JSON(http.StatusCreated, toTravelResponse(travel))
 }
 
 func parseDate(dateStr string) (time.Time, error) {
@@ -93,7 +94,7 @@ func (h *Handler) GetTravels(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, travels)
+	c.JSON(http.StatusOK, response.MapSlice(travels, toTravelResponse))
 }
 
 func (h *Handler) GetTravel(c *gin.Context) {
@@ -134,7 +135,7 @@ func (h *Handler) GetTravel(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, travel)
+	c.JSON(http.StatusOK, toTravelResponse(travel))
 }
 
 func (h *Handler) GetPublicTravels(c *gin.Context) {
@@ -146,7 +147,7 @@ func (h *Handler) GetPublicTravels(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, travels)
+	c.JSON(http.StatusOK, response.MapSlice(travels, toTravelResponse))
 }
 
 // ロジックないので、テストは書かない
@@ -177,7 +178,7 @@ func (h *Handler) GetPublicTravel(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, travel)
+	c.JSON(http.StatusOK, toTravelResponse(travel))
 }
 
 type UpdateTravelRequest struct {
@@ -263,7 +264,7 @@ func (h *Handler) UpdateTravel(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, travel)
+	c.JSON(http.StatusOK, toTravelResponse(travel))
 }
 
 func parseOptionalDate(value *string) (*time.Time, error) {

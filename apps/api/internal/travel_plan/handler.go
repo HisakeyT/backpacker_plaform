@@ -6,6 +6,7 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/HisakeyT/backpacker-platform/internal/response"
 	"github.com/HisakeyT/backpacker-platform/internal/travel"
 	"github.com/HisakeyT/backpacker-platform/internal/user"
 	"github.com/gin-gonic/gin"
@@ -89,7 +90,7 @@ func (h *Handler) CreateTravelPlan(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusCreated, travelPlan)
+	c.JSON(http.StatusCreated, toTravelPlanResponse(*travelPlan))
 }
 
 type UpdateTravelPlanRequest struct {
@@ -185,7 +186,7 @@ func (h *Handler) UpdateTravelPlan(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, travelPlan)
+	c.JSON(http.StatusOK, toTravelPlanResponse(*travelPlan))
 }
 
 func (h *Handler) GetTravelPlans(c *gin.Context) {
@@ -221,5 +222,5 @@ func (h *Handler) GetTravelPlans(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, travelPlans)
+	c.JSON(http.StatusOK, response.MapSlice(travelPlans, toTravelPlanResponse))
 }
