@@ -55,7 +55,7 @@ func (uc *UseCase) CreateTravelPlan(userID, travelID uint, input CreateTravelPla
 		SortOrder: input.SortOrder,
 	}
 
-	if uc.travelPlanRepository.Create(travelPlan); err != nil {
+	if err := uc.travelPlanRepository.Create(travelPlan); err != nil {
 		return nil, err
 	}
 

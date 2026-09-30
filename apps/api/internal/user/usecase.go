@@ -83,6 +83,8 @@ func (u *UseCase) Login(input LoginInput) (*LoginOutput, error) {
 		if errors.Is(err, ErrUserNotFound) {
 			return nil, ErrInvalidCredentials
 		}
+
+		return nil, err
 	}
 
 	err = bcrypt.CompareHashAndPassword([]byte(user.PasswordHash), []byte(input.Password))

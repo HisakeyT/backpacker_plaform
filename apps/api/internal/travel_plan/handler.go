@@ -24,8 +24,8 @@ func NewHandler(useCase *UseCase) *Handler {
 
 type CreateTravelPlanRequest struct {
 	Date      string `json:"date"`
-	Place     string `json:"place"`
-	Content   string `json:"content"`
+	Place     string `json:"place" binding:"required"`
+	Content   string `json:"content" binding:"required"`
 	SortOrder int    `json:"sort_order"`
 }
 

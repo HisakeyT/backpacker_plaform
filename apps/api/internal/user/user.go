@@ -5,7 +5,7 @@ import (
 	"time"
 )
 
-var ErrUserNotAuthorized = errors.New("user does not have permission to create a travel plan for this travel")
+var ErrUserNotAuthorized = errors.New("user does not have permission to access this resource")
 
 type User struct {
 	ID           uint
