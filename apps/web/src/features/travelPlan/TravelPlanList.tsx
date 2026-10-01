@@ -70,7 +70,8 @@ export const TravelPlanList = ({ travelId }: Props) => {
             sx={{
               display: "grid",
               gap: 2,
-              gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))",
+              justifyContent: "center",
+              gridTemplateColumns: "repeat(auto-fill, minmax(min(100%, 220px), 1fr))",
             }}
           >
             {dayPlans.map((plan) => (

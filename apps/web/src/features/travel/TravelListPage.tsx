@@ -33,7 +33,10 @@ export const TravelListPage = () => {
 
   return (
     <Box className="TravelListPage" sx={{ p: 2 }}>
-      <Typography variant="h4" component="h1" gutterBottom>
+      <Typography variant="h4" component="h1" gutterBottom sx={{
+        fontSize: { xs: "1.5rem", sm: "2.125rem" },
+        wordBreak: "break-word",
+      }}>
         {user?.nickname}の旅行記
       </Typography>
 

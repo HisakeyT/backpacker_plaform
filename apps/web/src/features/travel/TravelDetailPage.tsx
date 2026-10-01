@@ -44,7 +44,10 @@ export const TravelDetailPage = () => {
       <Button component={Link} to="/travels" sx={{ mb: 2 }}>
         ← 旅行一覧へ
       </Button>
-      <Typography variant="h4" component="h1" gutterBottom>
+      <Typography variant="h4" component="h1" gutterBottom sx={{
+        fontSize: { xs: "1.5rem", sm: "2.125rem" },
+        wordBreak: "break-word",
+      }}>
         {travel.title}
       </Typography>
       <Typography color="text.secondary" gutterBottom>
