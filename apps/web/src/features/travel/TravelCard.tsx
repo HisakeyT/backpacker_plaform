@@ -8,7 +8,7 @@ type Props = {
 
 export const TravelCard = ({ travel }: Props) => {
   return (
-    <Card sx={{ height: "100%" }}>
+    <Card className="TravelCard" sx={{ height: "100%" }}>
       <CardActionArea
         component={Link}
         to={`/travels/${travel.id}`}

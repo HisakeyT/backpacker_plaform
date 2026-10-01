@@ -3,6 +3,7 @@ import { Box, Typography } from "@mui/material";
 export function Footer() {
   return (
     <Box
+      className="Footer"
       component="footer"
       sx={{
         py: 3,

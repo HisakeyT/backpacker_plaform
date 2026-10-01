@@ -1,5 +1,6 @@
 import { Box } from "@mui/material";
 import { Outlet } from "react-router-dom";
+import { Container } from "@mui/material";
 
 import { Footer } from "../components/layout/Footer";
 import { Header } from "../components/layout/Header";
@@ -7,6 +8,7 @@ import { Header } from "../components/layout/Header";
 export function AppLayout() {
   return (
     <Box
+      className="AppLayout"
       sx={{
         minHeight: "100vh",
         display: "flex",
@@ -28,14 +30,14 @@ export function AppLayout() {
     >
       <Header />
 
-      <Box
+      <Container
+        className="AppLayout__content"
         component="main"
-        sx={{
-          flex: 1,
-        }}
+        maxWidth="lg"
+        sx={{ flex: 1, py: 4 }}
       >
         <Outlet />
-      </Box>
+      </Container>
 
       <Footer />
     </Box>

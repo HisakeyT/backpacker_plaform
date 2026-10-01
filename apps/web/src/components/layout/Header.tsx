@@ -12,7 +12,7 @@ export function Header() {
   }
 
   return (
-    <AppBar position="static" elevation={0}>
+    <AppBar className="Header" position="sticky" elevation={0}>
       <Toolbar>
         <Typography variant="h6" component="div">
           Backpacker

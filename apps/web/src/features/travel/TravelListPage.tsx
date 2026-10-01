@@ -32,7 +32,7 @@ export const TravelListPage = () => {
   if (error) return <p>{error}</p>;
 
   return (
-    <Box>
+    <Box className="TravelListPage" sx={{ p: 2 }}>
       <Typography variant="h4" component="h1" gutterBottom>
         {user?.nickname}の旅行記
       </Typography>
