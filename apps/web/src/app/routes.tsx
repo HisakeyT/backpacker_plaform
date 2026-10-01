@@ -4,6 +4,7 @@ import { AppLayout } from "./AppLayout";
 import { LoginPage } from "../features/auth/LoginPage";
 import { RequireAuth } from "./RequireAuth";
 import { TravelListPage } from "../features/travel/TravelListPage";
+import { TravelDetailPage } from "../features/travel/TravelDetailPage";
 
 export const router = createBrowserRouter([
   {
@@ -23,7 +24,11 @@ export const router = createBrowserRouter([
           {
             path: "/travels",
             element: <TravelListPage />,
-          }
+          },
+          {
+            path: "/travels/:travelId",
+            element: <TravelDetailPage />
+          },
         ],
       },
     ],
