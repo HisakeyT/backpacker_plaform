@@ -3,6 +3,7 @@ import { createBrowserRouter } from "react-router-dom";
 import { AppLayout } from "./AppLayout";
 import { LoginPage } from "../features/auth/LoginPage";
 import { RequireAuth } from "./RequireAuth";
+import { TravelListPage } from "../features/travel/TravelListPage";
 
 export const router = createBrowserRouter([
   {
@@ -19,6 +20,10 @@ export const router = createBrowserRouter([
             path: "/",
             element: <div>Home Page</div>,
           },
+          {
+            path: "/travels",
+            element: <TravelListPage />,
+          }
         ],
       },
     ],
