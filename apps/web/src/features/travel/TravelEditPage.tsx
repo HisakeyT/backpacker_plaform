@@ -71,7 +71,7 @@ export const TravelEditPage = () => {
           endDate: travel.endDate,
           isPublic: travel.isPublic,
         }}
-        submitLabel="保存する"
+        submitLabel="更新する"
         error={error}
         isSubmitting={isSubmitting}
         onSubmit={handleSubmit}

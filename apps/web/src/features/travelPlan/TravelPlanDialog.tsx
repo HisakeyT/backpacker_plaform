@@ -1,15 +1,16 @@
 import { useState } from "react";
 import { Dialog, DialogContent, DialogTitle } from "@mui/material";
 import { useAuth } from "../../app/providers/useAuth";
-import { createTravelPlan } from "./repository";
+import { createTravelPlan, updateTravelPlan } from "./repository";
 import { TravelPlanForm, type TravelPlanFormValue } from "./TravelPlanForm";
+import type { TravelPlan } from "./types";
 
 type TravelPlanDialogProps = {
   open: boolean;
   travelId: number;
   startDate: string;
   endDate: string;
-  // nextSortOrder: (date: string) => number;
+  plan?: TravelPlan | null;
   onClose: () => void;
   onSaved: () => void;
 };
@@ -19,13 +20,14 @@ export const TravelPlanDialog = ({
   travelId,
   startDate,
   endDate,
-  // nextSortOrder,
+  plan,
   onClose,
   onSaved,
 }: TravelPlanDialogProps) => {
   const { token } = useAuth();
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const isEdit = plan !== null;
 
   const handleClose = () => {
     if (isSubmitting) return;
@@ -38,15 +40,15 @@ export const TravelPlanDialog = ({
     setIsSubmitting(true);
     setError(null);
     try {
-      await createTravelPlan(token, travelId, {
-        ...value,
-        sortOrder: 0,
-        // sortOrder: nextSortOrder(value.date),
-      });
+      if (plan) {
+        await updateTravelPlan(token, travelId, plan.id, value);
+      } else {
+        await createTravelPlan(token, travelId, { ...value, sortOrder: 0 });
+      }
       onSaved();
       onClose();
     } catch {
-      setError("プランの追加に失敗しました");
+      setError(isEdit ? "プランの更新に失敗しました" : "プランの追加に失敗しました");
     } finally {
       setIsSubmitting(false);
     }
@@ -60,13 +62,18 @@ export const TravelPlanDialog = ({
       fullWidth
       maxWidth="sm"
     >
-      <DialogTitle>プランを追加</DialogTitle>
+      <DialogTitle>{isEdit ? "プランを編集" : "プランを追加"}</DialogTitle>
       <DialogContent sx={{ pt: 1 }}>
         <TravelPlanForm
+          initialValue={
+            plan
+              ? { date: plan.date, place: plan.place, content: plan.content }
+              : undefined
+          }
           defaultDate={startDate}
           minDate={startDate}
           maxDate={endDate}
-          submitLabel="追加する"
+          submitLabel={isEdit ? "保存する" : "追加する"}
           error={error}
           isSubmitting={isSubmitting}
           onCancel={handleClose}

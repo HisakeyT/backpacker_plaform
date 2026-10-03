@@ -16,3 +16,8 @@ export type CreateTravelPlanInput = {
   sortOrder: number;
 }
 
+export type UpdateTravelPlanInput = {
+  date?: string; // YYYY-MM-DD
+  place?: string;
+  content?: string;
+}

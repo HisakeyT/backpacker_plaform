@@ -1,5 +1,5 @@
 import { apiFetch } from "../../lib/apiFetch";
-import type { TravelPlan, CreateTravelPlanInput } from "./types";
+import type { TravelPlan, CreateTravelPlanInput, UpdateTravelPlanInput } from "./types";
 
 export const getTravelPlans = async (
   token: string,
@@ -15,6 +15,19 @@ export const createTravelPlan = async (
 ): Promise<TravelPlan> => {
   return apiFetch<TravelPlan>(`/api/travels/${travelId}/plans`, {
     method: "POST",
+    token,
+    body: input,
+  });
+};
+
+export const updateTravelPlan = async (
+  token: string,
+  travelId: number,
+  planId: number,
+  input: UpdateTravelPlanInput,
+): Promise<TravelPlan> => {
+  return apiFetch<TravelPlan>(`/api/travels/${travelId}/plans/${planId}`, {
+    method: "PATCH",
     token,
     body: input,
   });

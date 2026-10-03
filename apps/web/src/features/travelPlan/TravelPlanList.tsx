@@ -1,12 +1,15 @@
 import { useEffect, useState } from "react";
-import { Box, Card, Typography } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import { useAuth } from "../../app/providers/useAuth";
 import { getTravelPlans } from "./repository";
 import type { TravelPlan } from "./types";
 import { TravelPlanCard } from "./TravelPlanCard";
+import { TravelPlanDialog } from "./TravelPlanDialog";
 
-type Props = {
+type TravelPlanListProps = {
   travelId: number;
+  startDate: string;
+  endDate: string;
   reloadKey?: number;
 };
 
@@ -27,11 +30,13 @@ const groupByDate = (plans: TravelPlan[]): [string, TravelPlan[]][] => {
   return [...map.entries()];
 };
 
-export const TravelPlanList = ({ travelId, reloadKey = 0 }: Props) => {
+export const TravelPlanList = ({ travelId, startDate, endDate, reloadKey = 0 }: TravelPlanListProps) => {
   const { token } = useAuth();
   const [plans, setPlans] = useState<TravelPlan[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [editingPlan, setEditingPlan] = useState<TravelPlan | null>(null);
+  const [InnerReloadKey, setInnerReloadKey] = useState(0);
 
   useEffect(() => {
     if (!token) return;
@@ -48,7 +53,7 @@ export const TravelPlanList = ({ travelId, reloadKey = 0 }: Props) => {
     };
 
     fetchPlans();
-  }, [token, travelId, reloadKey]);
+  }, [token, travelId, reloadKey, editingPlan, InnerReloadKey]);
 
   if (isLoading) return <Typography>Loading...</Typography>;
   if (error) return <Typography color="error">{error}</Typography>;
@@ -76,11 +81,24 @@ export const TravelPlanList = ({ travelId, reloadKey = 0 }: Props) => {
             }}
           >
             {dayPlans.map((plan) => (
-              <TravelPlanCard key={plan.id} plan={plan} />
+              <TravelPlanCard key={plan.id} plan={plan} onEdit={setEditingPlan} />
             ))}
           </Box>
         </Box>
       ))}
-    </Box>
+      {
+        editingPlan && (
+          <TravelPlanDialog
+            open
+            travelId={travelId}
+            startDate={startDate}
+            endDate={endDate}
+            plan={editingPlan}
+            onClose={() => setEditingPlan(null)}
+            onSaved={() => setInnerReloadKey((k) => k + 1)}
+          />
+        )
+      }
+    </Box >
   );
 };

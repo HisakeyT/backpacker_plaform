@@ -1,14 +1,18 @@
-import { Card, CardContent, Typography } from "@mui/material";
+import { Button, Card, CardActions, CardContent, Typography } from "@mui/material";
 import type { TravelPlan } from "./types";
 
-type Props = {
+type TravelPlanCardProps = {
   plan: TravelPlan;
+  onEdit: (plan: TravelPlan) => void;
 };
 
-export const TravelPlanCard = ({ plan }: Props) => {
+export const TravelPlanCard = ({ plan, onEdit }: TravelPlanCardProps) => {
   return (
-    <Card className="TravelPlanCard" sx={{ height: "100%" }}>
-      <CardContent>
+    <Card
+      className="TravelPlanCard"
+      sx={{ height: "100%", display: "flex", flexDirection: "column" }}
+    >
+      <CardContent sx={{ flexGrow: 1 }}>
         <Typography variant="h6" gutterBottom>
           {plan.place}
         </Typography>
@@ -16,6 +20,11 @@ export const TravelPlanCard = ({ plan }: Props) => {
           {plan.content}
         </Typography>
       </CardContent>
+      <CardActions sx={{ justifyContent: "flex-end" }}>
+        <Button size="small" onClick={() => onEdit(plan)}>
+          編集
+        </Button>
+      </CardActions>
     </Card>
   );
 };

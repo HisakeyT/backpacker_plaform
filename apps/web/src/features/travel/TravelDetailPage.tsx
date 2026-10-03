@@ -143,7 +143,12 @@ export const TravelDetailPage = () => {
           プランを追加
         </Button>
       </Box>
-      <TravelPlanList travelId={travel.id} reloadKey={reloadKey} />
+      <TravelPlanList
+        travelId={travel.id}
+        startDate={travel.startDate}
+        endDate={travel.endDate}
+        reloadKey={reloadKey}
+      />
 
       <DeleteTravelDialog
         open={isDialogOpen}
