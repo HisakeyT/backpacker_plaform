@@ -9,3 +9,10 @@ export type Travel = {
   updatedAt: string;
 }
 
+export type CreateTravelInput = {
+  title: string;
+  startDate: string; // YYYY-MM-DD
+  endDate: string;
+  isPublic: boolean;
+}
+

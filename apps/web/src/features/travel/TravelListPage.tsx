@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import { useAuth } from "../../app/providers/useAuth";
 import { getTravels } from "./repository";
 import type { Travel } from "./types";
-import { Box, Typography } from "@mui/material";
+import { Box, Typography, Button } from "@mui/material";
 import { TravelCard } from "./TravelCard";
 
 export const TravelListPage = () => {
@@ -39,6 +40,9 @@ export const TravelListPage = () => {
       }}>
         {user?.nickname}の旅行記
       </Typography>
+      <Button component={Link} to="/travels/new" variant="contained" sx={{ mb: 2 }}>
+        新しい旅行を作る
+      </Button>
 
       {travels.length === 0 ? (
         <Typography color="text.secondary">
