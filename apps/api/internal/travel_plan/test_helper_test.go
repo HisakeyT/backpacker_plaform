@@ -7,6 +7,7 @@ import (
 type MockRepository struct {
 	CreateFunc         func(travelPlan *TravelPlan) error
 	UpdateFunc         func(travelPlan *TravelPlan) error
+	DeleteFunc         func(id uint) error
 	FindByIDFunc       func(id uint) (*TravelPlan, error)
 	FindByTravelIDFunc func(travelID uint) ([]TravelPlan, error)
 }
@@ -21,6 +22,14 @@ func (m *MockRepository) Create(travelPlan *TravelPlan) error {
 func (m *MockRepository) Update(travelPlan *TravelPlan) error {
 	if m.UpdateFunc != nil {
 		return m.UpdateFunc(travelPlan)
+	}
+
+	return nil
+}
+
+func (m *MockRepository) Delete(id uint) error {
+	if m.DeleteFunc != nil {
+		return m.DeleteFunc(id)
 	}
 
 	return nil

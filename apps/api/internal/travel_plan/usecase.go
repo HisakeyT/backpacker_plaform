@@ -83,6 +83,34 @@ func (uc *UseCase) GetTravelPlans(userID, travelID uint) ([]TravelPlan, error) {
 	return travelPlans, nil
 }
 
+func (uc *UseCase) DeleteTravelPlan(userID, travelID, travelPlanID uint) error {
+	travelData, err := uc.travelRepository.FindByID(travelID)
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return travel.ErrTravelNotFound
+		}
+		return err
+	}
+
+	if travelData.UserID != userID {
+		return user.ErrUserNotAuthorized
+	}
+
+	travelPlan, err := uc.travelPlanRepository.FindByID(travelPlanID)
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return ErrTravelPlanNotFound
+		}
+		return err
+	}
+
+	if travelPlan.TravelID != travelID {
+		return ErrTravelPlanNotBelongToTravel
+	}
+
+	return uc.travelPlanRepository.Delete(travelPlanID)
+}
+
 type UpdateTravelPlanInput struct {
 	Date      *time.Time
 	Place     *string

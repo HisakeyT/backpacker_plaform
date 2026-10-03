@@ -62,6 +62,7 @@ func main() {
 	protected.POST("/travels/:travel_id/plans", travelPlanHandler.CreateTravelPlan)
 	protected.PATCH("/travels/:travel_id/plans/:travel_plan_id", travelPlanHandler.UpdateTravelPlan)
 	protected.GET("/travels/:travel_id/plans", travelPlanHandler.GetTravelPlans)
+	protected.DELETE("/travels/:travel_id/plans/:travel_plan_id", travelPlanHandler.DeleteTravelPlan)
 
 	if err := r.Run(":8080"); err != nil {
 		log.Fatal(err)

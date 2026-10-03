@@ -224,3 +224,51 @@ func (h *Handler) GetTravelPlans(c *gin.Context) {
 
 	c.JSON(http.StatusOK, response.MapSlice(travelPlans, toTravelPlanResponse))
 }
+
+func (h *Handler) DeleteTravelPlan(c *gin.Context) {
+	userID := c.GetUint("userID")
+
+	travelPlanID64, err := strconv.ParseUint(c.Param("travel_plan_id"), 10, 64)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "invalid travel_plan_id",
+		})
+		return
+	}
+
+	travelID64, err := strconv.ParseUint(c.Param("travel_id"), 10, 64)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "invalid travel_id",
+		})
+		return
+	}
+
+	err = h.useCase.DeleteTravelPlan(userID, uint(travelID64), uint(travelPlanID64))
+	if err != nil {
+		if errors.Is(err, travel.ErrTravelNotFound) {
+			c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
+			return
+		}
+
+		if errors.Is(err, user.ErrUserNotAuthorized) {
+			c.JSON(http.StatusForbidden, gin.H{"error": err.Error()})
+			return
+		}
+
+		if errors.Is(err, ErrTravelPlanNotFound) {
+			c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
+			return
+		}
+
+		if errors.Is(err, ErrTravelPlanNotBelongToTravel) {
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			return
+		}
+
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.Status(http.StatusNoContent)
+}

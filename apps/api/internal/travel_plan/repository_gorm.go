@@ -18,6 +18,10 @@ func (r *GormRepository) Update(travelPlan *TravelPlan) error {
 	return r.db.Save(travelPlan).Error
 }
 
+func (r *GormRepository) Delete(id uint) error {
+	return r.db.Delete(&TravelPlan{}, id).Error
+}
+
 func (r *GormRepository) FindByID(id uint) (*TravelPlan, error) {
 	var travelPlan TravelPlan
 
