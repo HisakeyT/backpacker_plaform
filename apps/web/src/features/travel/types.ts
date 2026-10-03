@@ -16,3 +16,4 @@ export type CreateTravelInput = {
   isPublic: boolean;
 }
 
+export type UpdateTravelInput = CreateTravelInput

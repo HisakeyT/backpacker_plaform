@@ -44,12 +44,37 @@ export const TravelDetailPage = () => {
       <Button component={Link} to="/travels" sx={{ mb: 2 }}>
         ← 旅行一覧へ
       </Button>
-      <Typography variant="h4" component="h1" gutterBottom sx={{
-        fontSize: { xs: "1.5rem", sm: "2.125rem" },
-        wordBreak: "break-word",
-      }}>
-        {travel.title}
-      </Typography>
+
+      <Box
+        className="TravelDetailPage__header"
+        sx={{
+          display: "flex",
+          alignItems: "flex-start",
+          justifyContent: "space-between",
+          flexWrap: "wrap",
+          gap: 2,
+          mb: 1,
+        }}
+      >
+        <Typography
+          variant="h4"
+          component="h1"
+          sx={{
+            fontSize: { xs: "1.5rem", sm: "2.125rem" },
+            wordBreak: "break-word",
+          }}
+        >
+          {travel.title}
+        </Typography>
+        <Button
+          component={Link}
+          to={`/travels/${travel.id}/edit`}
+          variant="contained"
+        >
+          編集する
+        </Button>
+      </Box>
+
       <Typography color="text.secondary" gutterBottom>
         {travel.startDate} 〜 {travel.endDate}
       </Typography>

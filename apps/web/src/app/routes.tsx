@@ -6,6 +6,7 @@ import { RequireAuth } from "./RequireAuth";
 import { TravelListPage } from "../features/travel/TravelListPage";
 import { TravelDetailPage } from "../features/travel/TravelDetailPage";
 import { TravelCreatePage } from "../features/travel/TravelCreatePage";
+import { TravelEditPage } from "../features/travel/TravelEditPage";
 
 export const router = createBrowserRouter([
   {
@@ -29,6 +30,10 @@ export const router = createBrowserRouter([
           {
             path: "/travels/new",
             element: <TravelCreatePage />,
+          },
+          {
+            path: "/travels/:travelId/edit",
+            element: <TravelEditPage />
           },
           {
             path: "/travels/:travelId",

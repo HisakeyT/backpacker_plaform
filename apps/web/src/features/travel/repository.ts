@@ -1,4 +1,4 @@
-import type { Travel, CreateTravelInput } from "./types";
+import type { Travel, CreateTravelInput, UpdateTravelInput } from "./types";
 import { apiFetch } from "../../lib/apiFetch";
 
 export const getTravels = async (token: string): Promise<Travel[]> => {
@@ -15,6 +15,18 @@ export const createTravel = async (
 ): Promise<Travel> => {
   return apiFetch<Travel>("/api/travels", {
     method: "POST",
+    token,
+    body: input,
+  });
+};
+
+export const updateTravel = async (
+  token: string,
+  id: number,
+  input: UpdateTravelInput,
+): Promise<Travel> => {
+  return apiFetch<Travel>(`/api/travels/${id}`, {
+    method: "PATCH",
     token,
     body: input,
   });
