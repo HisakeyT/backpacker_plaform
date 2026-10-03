@@ -5,6 +5,7 @@ import { Box, Button, Chip, Typography } from "@mui/material";
 import { useAuth } from "../../app/providers/useAuth";
 import { TravelPlanList } from "../travelPlan/TravelPlanList";
 import { DeleteTravelDialog } from "./DeleteTravelDialog";
+import { TravelPlanDialog } from "../travelPlan/TravelPlanDialog";
 import { getTravel, deleteTravel } from "./repository";
 import type { Travel } from "./types";
 
@@ -19,6 +20,8 @@ export const TravelDetailPage = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [deleteError, setDeleteError] = useState<string | null>(null);
+
+  const [isPlanDialogOpen, setIsPlanDialogOpen] = useState(false);
 
   useEffect(() => {
     if (!token || !travelId) return;
@@ -36,6 +39,12 @@ export const TravelDetailPage = () => {
 
     fetchTravel();
   }, [token, travelId]);
+
+  const [reloadKey, setReloadKey] = useState(0);
+
+  const handlePlanSaved = () => {
+    setReloadKey((k) => k + 1);
+  };
 
   const handleOpenDialog = () => {
     setDeleteError(null);
@@ -116,10 +125,25 @@ export const TravelDetailPage = () => {
         color={travel.isPublic ? "primary" : "default"}
       />
 
-      <Typography variant="h5" component="h2" sx={{ mt: 4, mb: 2 }}>
-        旅のプラン
-      </Typography>
-      <TravelPlanList travelId={travel.id} />
+      <Box
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          flexWrap: "wrap",
+          gap: 2,
+          mt: 4,
+          mb: 2,
+        }}
+      >
+        <Typography variant="h5" component="h2">
+          旅のプラン
+        </Typography>
+        <Button variant="contained" onClick={() => setIsPlanDialogOpen(true)}>
+          プランを追加
+        </Button>
+      </Box>
+      <TravelPlanList travelId={travel.id} reloadKey={reloadKey} />
 
       <DeleteTravelDialog
         open={isDialogOpen}
@@ -128,6 +152,15 @@ export const TravelDetailPage = () => {
         isDeleting={isDeleting}
         onClose={() => setIsDialogOpen(false)}
         onConfirm={handleDelete}
+      />
+
+      <TravelPlanDialog
+        open={isPlanDialogOpen}
+        travelId={travel.id}
+        startDate={travel.startDate}
+        endDate={travel.endDate}
+        onClose={() => setIsPlanDialogOpen(false)}
+        onSaved={handlePlanSaved}
       />
     </Box>
   );

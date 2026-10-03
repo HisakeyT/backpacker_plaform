@@ -7,6 +7,7 @@ import { TravelPlanCard } from "./TravelPlanCard";
 
 type Props = {
   travelId: number;
+  reloadKey?: number;
 };
 
 const sortPlans = (plans: TravelPlan[]): TravelPlan[] => {
@@ -26,7 +27,7 @@ const groupByDate = (plans: TravelPlan[]): [string, TravelPlan[]][] => {
   return [...map.entries()];
 };
 
-export const TravelPlanList = ({ travelId }: Props) => {
+export const TravelPlanList = ({ travelId, reloadKey = 0 }: Props) => {
   const { token } = useAuth();
   const [plans, setPlans] = useState<TravelPlan[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -47,7 +48,7 @@ export const TravelPlanList = ({ travelId }: Props) => {
     };
 
     fetchPlans();
-  }, [token, travelId]);
+  }, [token, travelId, reloadKey]);
 
   if (isLoading) return <Typography>Loading...</Typography>;
   if (error) return <Typography color="error">{error}</Typography>;

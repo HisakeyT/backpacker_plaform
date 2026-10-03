@@ -8,3 +8,11 @@ export type TravelPlan = {
   createdAt: string;
   updatedAt: string;
 };
+
+export type CreateTravelPlanInput = {
+  date: string; // YYYY-MM-DD
+  place: string;
+  content: string;
+  sortOrder: number;
+}
+
