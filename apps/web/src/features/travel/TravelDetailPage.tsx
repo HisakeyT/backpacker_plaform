@@ -1,9 +1,11 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Link, useParams } from "react-router-dom";
 import { Box, Button, Chip, Typography } from "@mui/material";
 import { useAuth } from "../../app/providers/useAuth";
 import { TravelPlanList } from "../travelPlan/TravelPlanList";
-import { getTravel } from "./repository";
+import { DeleteTravelDialog } from "./DeleteTravelDialog";
+import { getTravel, deleteTravel } from "./repository";
 import type { Travel } from "./types";
 
 export const TravelDetailPage = () => {
@@ -12,6 +14,11 @@ export const TravelDetailPage = () => {
   const [travel, setTravel] = useState<Travel | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  const navigate = useNavigate();
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
 
   useEffect(() => {
     if (!token || !travelId) return;
@@ -29,6 +36,24 @@ export const TravelDetailPage = () => {
 
     fetchTravel();
   }, [token, travelId]);
+
+  const handleOpenDialog = () => {
+    setDeleteError(null);
+    setIsDialogOpen(true);
+  };
+
+  const handleDelete = async () => {
+    if (!token || !travel) return;
+    setIsDeleting(true);
+    setDeleteError(null);
+    try {
+      await deleteTravel(token, travel.id);
+      navigate("/travels");
+    } catch {
+      setDeleteError("旅行の削除に失敗しました");
+      setIsDeleting(false);
+    }
+  };
 
   if (isLoading) return <Typography>Loading...</Typography>;
   if (error || !travel) {
@@ -66,13 +91,20 @@ export const TravelDetailPage = () => {
         >
           {travel.title}
         </Typography>
-        <Button
-          component={Link}
-          to={`/travels/${travel.id}/edit`}
-          variant="contained"
-        >
-          編集する
-        </Button>
+
+        <Box sx={{ display: "flex", gap: 1 }}>
+          <Button
+            component={Link}
+            to={`/travels/${travel.id}/edit`}
+            variant="contained"
+            color="primary"
+          >
+            編集する
+          </Button>
+          <Button variant="outlined" color="inherit" onClick={handleOpenDialog}>
+            削除する
+          </Button>
+        </Box>
       </Box>
 
       <Typography color="text.secondary" gutterBottom>
@@ -88,6 +120,15 @@ export const TravelDetailPage = () => {
         旅のプラン
       </Typography>
       <TravelPlanList travelId={travel.id} />
+
+      <DeleteTravelDialog
+        open={isDialogOpen}
+        title={travel.title}
+        error={deleteError}
+        isDeleting={isDeleting}
+        onClose={() => setIsDialogOpen(false)}
+        onConfirm={handleDelete}
+      />
     </Box>
   );
 };

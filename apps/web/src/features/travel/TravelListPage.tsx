@@ -40,7 +40,7 @@ export const TravelListPage = () => {
       }}>
         {user?.nickname}の旅行記
       </Typography>
-      <Button component={Link} to="/travels/new" variant="contained" sx={{ mb: 2 }}>
+      <Button component={Link} to="/travels/new" variant="contained" color="primary" sx={{ mb: 2 }}>
         新しい旅行を作る
       </Button>
 

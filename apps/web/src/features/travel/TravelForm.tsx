@@ -103,7 +103,7 @@ export const TravelForm = ({
         </FormField>
 
         <Box>
-          <Button type="submit" variant="contained" disabled={isSubmitting}>
+          <Button type="submit" variant="contained" color="primary" disabled={isSubmitting}>
             {isSubmitting ? "送信中..." : submitLabel}
           </Button>
         </Box>
