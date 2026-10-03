@@ -105,12 +105,12 @@ export const TravelDetailPage = () => {
           <Button
             component={Link}
             to={`/travels/${travel.id}/edit`}
-            variant="contained"
+            variant="outlined"
             color="primary"
           >
             編集する
           </Button>
-          <Button variant="outlined" color="inherit" onClick={handleOpenDialog}>
+          <Button variant="outlined" color="error" onClick={handleOpenDialog}>
             削除する
           </Button>
         </Box>
