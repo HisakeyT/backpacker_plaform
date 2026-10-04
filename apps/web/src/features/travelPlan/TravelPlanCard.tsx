@@ -4,9 +4,10 @@ import type { TravelPlan } from "./types";
 type TravelPlanCardProps = {
   plan: TravelPlan;
   onEdit: (plan: TravelPlan) => void;
+  onDelete: (plan: TravelPlan) => void;
 };
 
-export const TravelPlanCard = ({ plan, onEdit }: TravelPlanCardProps) => {
+export const TravelPlanCard = ({ plan, onEdit, onDelete }: TravelPlanCardProps) => {
   return (
     <Card
       className="TravelPlanCard"
@@ -23,6 +24,9 @@ export const TravelPlanCard = ({ plan, onEdit }: TravelPlanCardProps) => {
       <CardActions sx={{ justifyContent: "flex-end" }}>
         <Button size="small" onClick={() => onEdit(plan)}>
           編集
+        </Button>
+        <Button size="small" color="error" onClick={() => onDelete(plan)}>
+          削除
         </Button>
       </CardActions>
     </Card>

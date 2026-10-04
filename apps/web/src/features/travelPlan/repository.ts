@@ -32,3 +32,14 @@ export const updateTravelPlan = async (
     body: input,
   });
 };
+
+export const deleteTravelPlan = async (
+  token: string,
+  travelId: number,
+  planId: number,
+): Promise<void> => {
+  await apiFetch<void>(`/api/travels/${travelId}/plans/${planId}`, {
+    method: "DELETE",
+    token,
+  });
+};

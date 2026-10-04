@@ -27,7 +27,7 @@ export const TravelPlanDialog = ({
   const { token } = useAuth();
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const isEdit = plan !== null;
+  const isEdit = plan != null;
 
   const handleClose = () => {
     if (isSubmitting) return;

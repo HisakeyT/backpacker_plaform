@@ -3,8 +3,8 @@ import { useNavigate } from "react-router-dom";
 import { Link, useParams } from "react-router-dom";
 import { Box, Button, Chip, Typography } from "@mui/material";
 import { useAuth } from "../../app/providers/useAuth";
+import { ConfirmDeleteDialog } from "../../components/ComfirmDeleteDialog"
 import { TravelPlanList } from "../travelPlan/TravelPlanList";
-import { DeleteTravelDialog } from "./DeleteTravelDialog";
 import { TravelPlanDialog } from "../travelPlan/TravelPlanDialog";
 import { getTravel, deleteTravel } from "./repository";
 import type { Travel } from "./types";
@@ -150,14 +150,16 @@ export const TravelDetailPage = () => {
         reloadKey={reloadKey}
       />
 
-      <DeleteTravelDialog
+      <ConfirmDeleteDialog
         open={isDialogOpen}
-        title={travel.title}
+        heading="旅行を削除しますか？"
+        description={`「${travel.title}」と、その旅のプランがすべて削除されます。この操作は取り消せません。`}
         error={deleteError}
         isDeleting={isDeleting}
         onClose={() => setIsDialogOpen(false)}
         onConfirm={handleDelete}
       />
+
 
       <TravelPlanDialog
         open={isPlanDialogOpen}

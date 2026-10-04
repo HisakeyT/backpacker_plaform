@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
 import { Box, Typography } from "@mui/material";
 import { useAuth } from "../../app/providers/useAuth";
-import { getTravelPlans } from "./repository";
+import { getTravelPlans, deleteTravelPlan } from "./repository";
 import type { TravelPlan } from "./types";
 import { TravelPlanCard } from "./TravelPlanCard";
 import { TravelPlanDialog } from "./TravelPlanDialog";
+import { ConfirmDeleteDialog } from "../../components/ComfirmDeleteDialog";
 
 type TravelPlanListProps = {
   travelId: number;
@@ -36,7 +37,33 @@ export const TravelPlanList = ({ travelId, startDate, endDate, reloadKey = 0 }: 
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [editingPlan, setEditingPlan] = useState<TravelPlan | null>(null);
-  const [InnerReloadKey, setInnerReloadKey] = useState(0);
+  const [innerReloadKey, setInnerReloadKey] = useState(0);
+  const [deletingPlan, setDeletingPlan] = useState<TravelPlan | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
+
+  const handleCloseDelete = () => {
+    if (isDeleting) return;
+
+    setDeleteError(null);
+    setDeletingPlan(null);
+  }
+
+  const handleConfirmDelete = async () => {
+    if (!token || !deletingPlan) return;
+    setIsDeleting(true);
+    setDeleteError(null);
+
+    try {
+      await deleteTravelPlan(token, travelId, deletingPlan.id);
+      setDeletingPlan(null);
+      setInnerReloadKey((k) => k + 1);
+    } catch {
+      setDeleteError("プランの削除に失敗しました");
+    } finally {
+      setIsDeleting(false);
+    }
+  }
 
   useEffect(() => {
     if (!token) return;
@@ -53,7 +80,7 @@ export const TravelPlanList = ({ travelId, startDate, endDate, reloadKey = 0 }: 
     };
 
     fetchPlans();
-  }, [token, travelId, reloadKey, editingPlan, InnerReloadKey]);
+  }, [token, travelId, reloadKey, innerReloadKey]);
 
   if (isLoading) return <Typography>Loading...</Typography>;
   if (error) return <Typography color="error">{error}</Typography>;
@@ -81,7 +108,7 @@ export const TravelPlanList = ({ travelId, startDate, endDate, reloadKey = 0 }: 
             }}
           >
             {dayPlans.map((plan) => (
-              <TravelPlanCard key={plan.id} plan={plan} onEdit={setEditingPlan} />
+              <TravelPlanCard key={plan.id} plan={plan} onEdit={setEditingPlan} onDelete={setDeletingPlan} />
             ))}
           </Box>
         </Box>
@@ -99,6 +126,18 @@ export const TravelPlanList = ({ travelId, startDate, endDate, reloadKey = 0 }: 
           />
         )
       }
+
+      {deletingPlan && (
+        <ConfirmDeleteDialog
+          open
+          heading="プランを削除しますか？"
+          description={`「${deletingPlan.place}」のプランが削除されます。この操作は取り消せません。`}
+          error={deleteError}
+          isDeleting={isDeleting}
+          onClose={handleCloseDelete}
+          onConfirm={handleConfirmDelete}
+        />
+      )}
     </Box >
   );
 };
