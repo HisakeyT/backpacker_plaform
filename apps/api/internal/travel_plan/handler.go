@@ -4,6 +4,7 @@ import (
 	"errors"
 	"net/http"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/HisakeyT/backpacker-platform/internal/response"
@@ -126,6 +127,20 @@ func (h *Handler) UpdateTravelPlan(c *gin.Context) {
 	if err := c.ShouldBindJSON(&updateReq); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"error": "invalid request",
+		})
+		return
+	}
+
+	if updateReq.Place != nil && strings.TrimSpace(*updateReq.Place) == "" {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "place must not be empty",
+		})
+		return
+	}
+
+	if updateReq.Content != nil && strings.TrimSpace(*updateReq.Content) == "" {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "content must not be empty",
 		})
 		return
 	}
