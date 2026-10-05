@@ -20,8 +20,8 @@ func TestHandler_GetPublicTravels(t *testing.T) {
 		{
 			name: "公開Travelを複数取得できる",
 			repository: &MockRepository{
-				FindPublicTravelsFunc: func() ([]*Travel, error) {
-					return []*Travel{
+				FindPublicTravelsFunc: func() ([]*PublicTravel, error) {
+					return []*PublicTravel{
 						{
 							ID:       1,
 							UserID:   1,
@@ -42,8 +42,8 @@ func TestHandler_GetPublicTravels(t *testing.T) {
 		{
 			name: "公開Travelが0件",
 			repository: &MockRepository{
-				FindPublicTravelsFunc: func() ([]*Travel, error) {
-					return []*Travel{}, nil
+				FindPublicTravelsFunc: func() ([]*PublicTravel, error) {
+					return []*PublicTravel{}, nil
 				},
 			},
 			wantStatus: http.StatusOK,
@@ -51,7 +51,7 @@ func TestHandler_GetPublicTravels(t *testing.T) {
 		{
 			name: "UseCaseでエラーが発生する",
 			repository: &MockRepository{
-				FindPublicTravelsFunc: func() ([]*Travel, error) {
+				FindPublicTravelsFunc: func() ([]*PublicTravel, error) {
 					return nil, errors.New("repository error")
 				},
 			},

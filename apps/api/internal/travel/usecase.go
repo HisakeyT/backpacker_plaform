@@ -56,12 +56,12 @@ func validateTravelDateRange(startDate, endDate time.Time) error {
 	return nil
 }
 
-func (u *UseCase) GetPublicTravels() ([]*Travel, error) {
+func (u *UseCase) GetPublicTravels() ([]*PublicTravel, error) {
 	return u.repository.FindPublicTravels()
 }
 
 // ロジックがないので、テストは書かない
-func (u *UseCase) GetPublicTravel(travelID uint) (*Travel, error) {
+func (u *UseCase) GetPublicTravel(travelID uint) (*PublicTravel, error) {
 	return u.repository.FindPublicByID(travelID)
 }
 

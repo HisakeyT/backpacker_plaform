@@ -17,3 +17,8 @@ type Travel struct {
 	CreatedAt time.Time
 	UpdatedAt time.Time
 }
+
+type PublicTravel struct {
+	Travel
+	AuthorNickname string
+}

@@ -27,3 +27,25 @@ func toTravelResponse(t *Travel) TravelResponse {
 		UpdatedAt: t.UpdatedAt,
 	}
 }
+
+type PublicTravelResponse struct {
+	ID             uint      `json:"id"`
+	Title          string    `json:"title"`
+	StartDate      string    `json:"start_date"`
+	EndDate        string    `json:"end_date"`
+	AuthorNickname string    `json:"author_nickname"`
+	CreatedAt      time.Time `json:"created_at"`
+	UpdatedAt      time.Time `json:"updated_at"`
+}
+
+func toPublicTravelResponse(t *PublicTravel) PublicTravelResponse {
+	return PublicTravelResponse{
+		ID:             t.ID,
+		Title:          t.Title,
+		StartDate:      t.StartDate.Format(dateLayout),
+		EndDate:        t.EndDate.Format(dateLayout),
+		AuthorNickname: t.AuthorNickname,
+		CreatedAt:      t.CreatedAt,
+		UpdatedAt:      t.UpdatedAt,
+	}
+}

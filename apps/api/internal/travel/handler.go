@@ -138,49 +138,6 @@ func (h *Handler) GetTravel(c *gin.Context) {
 	c.JSON(http.StatusOK, toTravelResponse(travel))
 }
 
-func (h *Handler) GetPublicTravels(c *gin.Context) {
-	travels, err := h.useCase.GetPublicTravels()
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"error": "failed to get public travels",
-		})
-		return
-	}
-
-	c.JSON(http.StatusOK, response.MapSlice(travels, toTravelResponse))
-}
-
-// ロジックないので、テストは書かない
-func (h *Handler) GetPublicTravel(c *gin.Context) {
-	travelIDStr := c.Param("travel_id")
-	travelID64, err := strconv.ParseUint(travelIDStr, 10, 64)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"error": "Invalid travel ID",
-		})
-
-		return
-	}
-	travelID := uint(travelID64)
-
-	travel, err := h.useCase.GetPublicTravel(travelID)
-	if err != nil {
-		if errors.Is(err, ErrTravelNotFound) {
-			c.JSON(http.StatusNotFound, gin.H{
-				"error": err.Error(),
-			})
-			return
-		}
-
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"error": err.Error(),
-		})
-		return
-	}
-
-	c.JSON(http.StatusOK, toTravelResponse(travel))
-}
-
 type UpdateTravelRequest struct {
 	Title     *string `json:"title"`
 	StartDate *string `json:"start_date"`
@@ -317,4 +274,47 @@ func (h *Handler) DeleteTravel(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusNoContent, gin.H{})
+}
+
+func (h *Handler) GetPublicTravels(c *gin.Context) {
+	travels, err := h.useCase.GetPublicTravels()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": "failed to get public travels",
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, response.MapSlice(travels, toPublicTravelResponse))
+}
+
+// ロジックないので、テストは書かない
+func (h *Handler) GetPublicTravel(c *gin.Context) {
+	travelIDStr := c.Param("travel_id")
+	travelID64, err := strconv.ParseUint(travelIDStr, 10, 64)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "Invalid travel ID",
+		})
+
+		return
+	}
+	travelID := uint(travelID64)
+
+	travel, err := h.useCase.GetPublicTravel(travelID)
+	if err != nil {
+		if errors.Is(err, ErrTravelNotFound) {
+			c.JSON(http.StatusNotFound, gin.H{
+				"error": err.Error(),
+			})
+			return
+		}
+
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, toPublicTravelResponse(travel))
 }
