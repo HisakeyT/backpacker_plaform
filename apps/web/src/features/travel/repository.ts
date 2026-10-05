@@ -1,4 +1,4 @@
-import type { Travel, CreateTravelInput, UpdateTravelInput } from "./types";
+import type { Travel, PublicTravel, CreateTravelInput, UpdateTravelInput } from "./types";
 import { apiFetch } from "../../lib/apiFetch";
 
 export const getTravels = async (token: string): Promise<Travel[]> => {
@@ -37,4 +37,12 @@ export const deleteTravel = async (token: string, id: number): Promise<void> => 
     method: "DELETE",
     token,
   });
-};;
+};
+
+export const getPublicTravels = async (): Promise<PublicTravel[]> => {
+  return apiFetch<PublicTravel[]>("/api/travels/public", { method: "GET" });
+};
+
+export const getPublicTravel = async (travelId: number): Promise<PublicTravel> => {
+  return apiFetch<PublicTravel>(`/api/travels/public/${travelId}`, { method: "GET" });
+};

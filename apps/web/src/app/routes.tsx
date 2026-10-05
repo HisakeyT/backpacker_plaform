@@ -7,6 +7,7 @@ import { TravelListPage } from "../features/travel/TravelListPage";
 import { TravelDetailPage } from "../features/travel/TravelDetailPage";
 import { TravelCreatePage } from "../features/travel/TravelCreatePage";
 import { TravelEditPage } from "../features/travel/TravelEditPage";
+import { PublicTravelListPage } from "../features/travel/PublicTravelListPage";
 
 export const router = createBrowserRouter([
   {
@@ -15,6 +16,10 @@ export const router = createBrowserRouter([
       {
         path: "/login",
         element: <LoginPage />,
+      },
+      {
+        path: "/public/travels",
+        element: <PublicTravelListPage />,
       },
       {
         element: <RequireAuth />,

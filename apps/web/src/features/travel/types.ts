@@ -9,6 +9,10 @@ export type Travel = {
   updatedAt: string;
 }
 
+export interface PublicTravel extends Omit<Travel, "userId" | "isPublic"> {
+  authorNickname: string;
+}
+
 export type CreateTravelInput = {
   title: string;
   startDate: string; // YYYY-MM-DD
