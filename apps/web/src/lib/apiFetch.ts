@@ -10,6 +10,20 @@ type ApiFetchOptions = {
   body?: Record<string, unknown>;
 };
 
+export class ApiError extends Error {
+  status: number;
+  method: string;
+  path: string;
+
+  constructor(method: string, path: string, status: number) {
+    super(`Request failed: ${method} ${path} (${status})`);
+    this.name = "ApiError";
+    this.status = status;
+    this.method = method;
+    this.path = path;
+  }
+}
+
 export const apiFetch = async <T>(
   path: string,
   options: ApiFetchOptions,
@@ -31,7 +45,7 @@ export const apiFetch = async <T>(
   });
 
   if (!response.ok) {
-    throw new Error(`Request failed: ${method} ${path} (${response.status})`);
+    throw new ApiError(method, path, response.status);
   }
 
   if (response.status === 204) {

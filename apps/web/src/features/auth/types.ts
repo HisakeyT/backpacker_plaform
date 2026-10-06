@@ -13,3 +13,10 @@ export type LoginResponse = {
   token: string;
   user: User;
 };
+
+export type RegisterRequest = {
+  nickname: string;
+  email: string;
+  password: string;
+  passwordConfirmation: string;
+};
