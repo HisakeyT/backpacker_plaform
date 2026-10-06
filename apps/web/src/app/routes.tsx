@@ -8,6 +8,7 @@ import { TravelDetailPage } from "../features/travel/TravelDetailPage";
 import { TravelCreatePage } from "../features/travel/TravelCreatePage";
 import { TravelEditPage } from "../features/travel/TravelEditPage";
 import { PublicTravelListPage } from "../features/travel/PublicTravelListPage";
+import { PublicTravelDetailPage } from "../features/travel/PublicTravelDetailPage";
 
 export const router = createBrowserRouter([
   {
@@ -20,6 +21,10 @@ export const router = createBrowserRouter([
       {
         path: "/public/travels",
         element: <PublicTravelListPage />,
+      },
+      {
+        path: "/public/travels/:travelId",
+        element: <PublicTravelDetailPage />,
       },
       {
         element: <RequireAuth />,

@@ -43,3 +43,12 @@ export const deleteTravelPlan = async (
     token,
   });
 };
+
+export const getPublicTravelPlans = async (
+  travelId: number,
+): Promise<TravelPlan[]> => {
+  return apiFetch<TravelPlan[]>(
+    `/api/travels/public/${travelId}/plans`,
+    { method: "GET" },
+  );
+};
