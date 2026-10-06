@@ -1,8 +1,9 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { Box, Button, TextField, Typography } from "@mui/material";
+import { Link as RouterLink, useNavigate } from "react-router-dom";
+import { Link, Box, Button, TextField, Typography } from "@mui/material";
 import { PageContainer } from "../../components/layout/PageContainer";
 import { useAuth } from "../../app/providers/useAuth";
+import { RegisteredNotice } from "./RegisterNotice";
 
 export function LoginPage() {
   const [email, setEmail] = useState("");
@@ -35,6 +36,8 @@ export function LoginPage() {
           Login
         </Typography>
 
+        <RegisteredNotice />
+
         <TextField
           label="Email"
           type="email"
@@ -59,6 +62,13 @@ export function LoginPage() {
         >
           Login
         </Button>
+
+        <Typography variant="body2" color="text.secondary" align="center">
+          アカウントをお持ちでない方は{" "}
+          <Link component={RouterLink} to="/register">
+            新規登録
+          </Link>
+        </Typography>
       </Box>
     </PageContainer>
   );

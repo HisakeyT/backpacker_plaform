@@ -20,3 +20,5 @@ export type RegisterRequest = {
   password: string;
   passwordConfirmation: string;
 };
+
+export type LoginLocationState = { from?: "register" } | null;

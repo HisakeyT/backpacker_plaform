@@ -1,9 +1,10 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { Alert, Box, Button, TextField, Typography } from "@mui/material";
+import { Link as RouterLink, useNavigate } from "react-router-dom";
+import { Link, Alert, Box, Button, TextField, Typography } from "@mui/material";
 import { ApiError } from "../../lib/apiFetch";
 import { PageContainer } from "../../components/layout/PageContainer";
 import { register } from "./repository";
+import type { LoginLocationState } from "./types";
 
 export function RegisterPage() {
   const [nickname, setNickname] = useState("");
@@ -13,6 +14,7 @@ export function RegisterPage() {
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  const state: LoginLocationState = { from: "register" };
   const navigate = useNavigate();
 
   const handleSubmit = async (event: React.FormEvent) => {
@@ -27,7 +29,7 @@ export function RegisterPage() {
     setIsSubmitting(true);
     try {
       await register({ nickname, email, password, passwordConfirmation });
-      navigate("/login");
+      navigate("/login", { state });
     } catch (e) {
       if (e instanceof ApiError && e.status === 409) {
         setError("このメールアドレスは既に使われています");
@@ -102,7 +104,10 @@ export function RegisterPage() {
         </Button>
 
         <Typography variant="body2" color="text.secondary" align="center">
-          アカウントをお持ちの方は <Link to="/login">ログイン</Link>
+          アカウントをお持ちの方は{" "}
+          <Link component={RouterLink} to="/login">
+            ログイン
+          </Link>
         </Typography>
       </Box>
     </PageContainer>
