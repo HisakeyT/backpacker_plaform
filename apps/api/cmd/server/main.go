@@ -63,6 +63,7 @@ func main() {
 	protected.PATCH("/travels/:travel_id/plans/:travel_plan_id", travelPlanHandler.UpdateTravelPlan)
 	protected.GET("/travels/:travel_id/plans", travelPlanHandler.GetTravelPlans)
 	protected.DELETE("/travels/:travel_id/plans/:travel_plan_id", travelPlanHandler.DeleteTravelPlan)
+	r.GET("/travels/public/:travel_id/plans", travelPlanHandler.GetPublicTravelPlan)
 
 	if err := r.Run(":8080"); err != nil {
 		log.Fatal(err)

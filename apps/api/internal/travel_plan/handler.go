@@ -287,3 +287,30 @@ func (h *Handler) DeleteTravelPlan(c *gin.Context) {
 
 	c.Status(http.StatusNoContent)
 }
+
+func (h *Handler) GetPublicTravelPlan(c *gin.Context) {
+	travelID, err := strconv.ParseUint(c.Param("travel_id"), 10, 64)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "invalid travel_id",
+		})
+		return
+	}
+
+	travelPlans, err := h.useCase.GetPulicTravelPlan(uint(travelID))
+	if err != nil {
+		if errors.Is(err, travel.ErrTravelNotFound) {
+			c.JSON(http.StatusNotFound, gin.H{
+				"error": err.Error(),
+			})
+			return
+		}
+
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, response.MapSlice(travelPlans, toTravelPlanResponse))
+}

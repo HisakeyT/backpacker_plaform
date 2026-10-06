@@ -170,3 +170,24 @@ func applyTravelPlanUpdates(travelPlan *TravelPlan, input UpdateTravelPlanInput)
 		travelPlan.SortOrder = *input.SortOrder
 	}
 }
+
+func (uc *UseCase) GetPulicTravelPlan(travelID uint) ([]TravelPlan, error) {
+	travelData, err := uc.travelRepository.FindByID(travelID)
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, travel.ErrTravelNotFound
+		}
+		return nil, err
+	}
+
+	if !travelData.IsPublic {
+		return nil, travel.ErrTravelNotFound
+	}
+
+	travelPlans, err := uc.travelPlanRepository.FindByTravelID(travelID)
+	if err != nil {
+		return nil, err
+	}
+
+	return travelPlans, nil
+}
