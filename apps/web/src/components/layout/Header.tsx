@@ -34,7 +34,12 @@ export function Header() {
   return (
     <AppBar className="Header" position="sticky" elevation={0}>
       <Toolbar>
-        <Typography variant="h6" component="div" sx={{ mr: 2 }}>
+        <Typography
+          variant="h6"
+          component={Link}
+          to="/"
+          sx={{ mr: 2, color: "inherit", textDecoration: "none" }}
+        >
           Backpacker
         </Typography>
 

@@ -1,11 +1,15 @@
-import { Box } from "@mui/material";
-import { Outlet } from "react-router-dom";
-import { Container } from "@mui/material";
+import { Box, Container } from "@mui/material";
+import { Outlet, useLocation } from "react-router-dom";
 
 import { Footer } from "../components/layout/Footer";
 import { Header } from "../components/layout/Header";
 
 export function AppLayout() {
+
+  const pathname = useLocation();
+  const isFullScreen = pathname.pathname === "/";
+
+
   return (
     <Box
       className="AppLayout"
@@ -30,14 +34,20 @@ export function AppLayout() {
     >
       <Header />
 
-      <Container
-        className="AppLayout__content"
-        component="main"
-        maxWidth="lg"
-        sx={{ flex: 1, py: 4 }}
-      >
-        <Outlet />
-      </Container>
+      {isFullScreen ? (
+        <Box component="main" sx={{ flex: 1 }}>
+          <Outlet />
+        </Box>
+      ) : (
+        <Container
+          className="AppLayout__content"
+          component="main"
+          maxWidth="lg"
+          sx={{ flex: 1, py: 4 }}
+        >
+          <Outlet />
+        </Container>
+      )}
 
       <Footer />
     </Box>
