@@ -12,6 +12,7 @@ import {
 import MenuIcon from "@mui/icons-material/Menu";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../app/providers/useAuth";
+import { SERVICE_NAME } from "../../constants/site.ts";
 
 export function Header() {
   const { isAuthenticated, user, logout } = useAuth();
@@ -26,27 +27,35 @@ export function Header() {
     navigate("/login");
   };
 
+  const navButtonSx = { fontSize: "1rem", fontWeight: 500, color: "inherit" };
+
   const links = [
     { label: "みんなの旅行記", to: "/public/travels" },
     ...(isAuthenticated ? [{ label: "自分の旅行記", to: "/travels" }] : []),
   ];
 
   return (
-    <AppBar className="Header" position="sticky" elevation={0}>
-      <Toolbar>
+    <AppBar className="Header" position="sticky" elevation={0} sx={{ bgcolor: "#1e3a5f" }}>
+      <Toolbar sx={{ minHeight: { xs: 56, md: 72 } }}>
         <Typography
           variant="h6"
           component={Link}
           to="/"
-          sx={{ mr: 2, color: "inherit", textDecoration: "none" }}
+          sx={{
+            fontSize: { xs: "1.5rem", md: "1.6rem" },
+            fontWeight: 700,
+            color: "inherit",
+            textDecoration: "none",
+            mr: { md: 4 },
+          }}
         >
-          Backpacker
+          {SERVICE_NAME}
         </Typography>
 
-        {/* sm 以上：ボタン表示 */}
-        <Box sx={{ display: { xs: "none", md: "flex" }, flexGrow: 1 }}>
+        {/* md 以上：ボタン表示 */}
+        <Box sx={{ display: { xs: "none", md: "flex" }, flexGrow: 1, gap: 1 }}>
           {links.map((link) => (
-            <Button key={link.to} color="inherit" component={Link} to={link.to}>
+            <Button key={link.to} component={Link} to={link.to} sx={navButtonSx}>
               {link.label}
             </Button>
           ))}
@@ -55,13 +64,13 @@ export function Header() {
         <Box sx={{ display: { xs: "none", md: "flex" }, alignItems: "center" }}>
           {isAuthenticated ? (
             <>
-              <Typography sx={{ mr: 2 }}>Hello, {user?.nickname}</Typography>
-              <Button color="inherit" onClick={handleLogout}>
+              <Typography sx={{ mr: 2, fontSize: "1rem" }}>Hello, {user?.nickname}</Typography>
+              <Button onClick={handleLogout} sx={navButtonSx}>
                 Logout
               </Button>
             </>
           ) : (
-            <Button color="inherit" component={Link} to="/login">
+            <Button component={Link} to="/login" sx={navButtonSx}>
               ログイン
             </Button>
           )}

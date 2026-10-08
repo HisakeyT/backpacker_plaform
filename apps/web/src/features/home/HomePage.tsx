@@ -4,7 +4,7 @@ import { useAuth } from "../../app/providers/useAuth";
 import EditNoteIcon from "@mui/icons-material/EditNote";
 import PublicIcon from "@mui/icons-material/Public";
 import ExploreIcon from "@mui/icons-material/Explore";
-
+import { SERVICE_NAME } from "../../constants/site.ts";
 import heroImage from "../../assets/hero.webp";
 import ctaImage from "../../assets/ctaImage.webp";
 
@@ -39,14 +39,30 @@ export const HomePage = () => {
       <Box
         className="HomePage__hero"
         sx={{
+          position: "relative",
           color: "common.white",
           py: { xs: 10, md: 16 },
-          background: heroImage
-            ? `linear-gradient(rgba(0,0,0,0.45), rgba(0,0,0,0.45)), url(${heroImage}) center / cover`
-            : "linear-gradient(135deg, #1e3a5f 0%, #3874cb 60%, #5b9bd5 100%)",
+          ...(heroImage
+            ? {
+              backgroundImage: `url(${heroImage})`,
+              backgroundSize: "cover",
+              backgroundPosition: { xs: "75% center", md: "center" },
+              "&::before": {
+                content: '""',
+                position: "absolute",
+                inset: 0,
+                background: {
+                  xs: "rgba(10,25,50,0.6)",
+                  md: "linear-gradient(90deg, rgba(10,25,50,0.65) 0%, rgba(10,25,50,0.45) 45%, rgba(10,25,50,0.1) 75%)",
+                },
+              },
+            }
+            : {
+              background: "linear-gradient(135deg, #1e3a5f 0%, #3874cb 60%, #5b9bd5 100%)",
+            }),
         }}
       >
-        <Container maxWidth="md">
+        <Container maxWidth="md" sx={{ position: "relative" }} >
           <Typography
             variant="h2"
             component="h1"
@@ -63,7 +79,7 @@ export const HomePage = () => {
           <Typography
             sx={{ fontSize: { xs: "1rem", md: "1.25rem" }, mb: 4, maxWidth: 560, wordBreak: "keep-all", overflowWrap: "anywhere", }}
           >
-            Backpacker は、バックパッカーのための旅の記録・共有サービスです。
+            {SERVICE_NAME} は、バックパッカーのための旅の記録・共有サービスです。
             日ごとのプランを残し、公開して、これから旅に出る人の道しるべにしよう。
           </Typography>
           <Box sx={{ display: "flex", gap: 2, flexWrap: "wrap" }}>
@@ -91,7 +107,7 @@ export const HomePage = () => {
             </Button>
           </Box>
         </Container>
-      </Box >
+      </Box>
 
       {/* 特徴 */}
       < Container maxWidth="lg" sx={{ py: { xs: 6, md: 10 } }}>
@@ -136,13 +152,13 @@ export const HomePage = () => {
           color: "common.white",
           backgroundImage: `url(${ctaImage})`,
           backgroundSize: "cover",
-          backgroundPosition: "center 40%",
+          backgroundPosition: { xs: "80% center", md: "center 50%" },
           "&::before": {
             content: '""',
             position: "absolute",
             inset: 0,
             background:
-              "linear-gradient(135deg, rgba(30,58,95,0.85) 0%, rgba(56,116,203,0.55) 100%)",
+              "linear-gradient(90deg, rgba(20,45,85,0.8) 0%, rgba(30,58,95,0.55) 50%, rgba(56,116,203,0.15) 100%)",
           },
         }}
       >
