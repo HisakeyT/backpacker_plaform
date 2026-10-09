@@ -31,7 +31,7 @@ func main() {
 	travelHandler := travel.NewHandler(travelUseCase)
 
 	travelPlanRepository := travel.NewGormPlanRepository(db)
-	travelPlanUseCase := travel_plan.NewUseCase(travelRepository, travelPlanRepository)
+	travelPlanUseCase := travel_plan.NewPlanUseCase(travelRepository, travelPlanRepository)
 	travelPlanHandler := travel_plan.NewHandler(travelPlanUseCase)
 
 	r := gin.Default()

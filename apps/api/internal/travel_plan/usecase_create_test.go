@@ -41,7 +41,7 @@ func TestUseCase_CreateTravelPlan(t *testing.T) {
 			},
 		}
 
-		useCase := NewUseCase(
+		useCase := NewPlanUseCase(
 			travelRepository,
 			travelPlanRepository,
 		)
@@ -118,7 +118,7 @@ func TestUseCase_CreateTravelPlan_Invalid(t *testing.T) {
 				},
 			}
 
-			useCase := NewUseCase(
+			useCase := NewPlanUseCase(
 				travelRepository,
 				travelPlanRepository,
 			)

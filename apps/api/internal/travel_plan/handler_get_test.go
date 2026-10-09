@@ -135,7 +135,7 @@ func TestHandler_GetTravelPlans(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			travelRepository, travelPlanRepository := tt.setupRepository()
 
-			useCase := NewUseCase(
+			useCase := NewPlanUseCase(
 				travelRepository,
 				travelPlanRepository,
 			)

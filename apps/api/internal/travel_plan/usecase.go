@@ -13,16 +13,16 @@ type TravelRepository interface {
 	FindByID(id uint) (*travel.Travel, error)
 }
 
-type UseCase struct {
+type PlanUsecase struct {
 	travelRepository     TravelRepository
 	travelPlanRepository travel.PlanRepository
 }
 
-func NewUseCase(
+func NewPlanUseCase(
 	travelRepository TravelRepository,
 	travelPlanRepository travel.PlanRepository,
-) *UseCase {
-	return &UseCase{
+) *PlanUsecase {
+	return &PlanUsecase{
 		travelRepository:     travelRepository,
 		travelPlanRepository: travelPlanRepository,
 	}
@@ -35,7 +35,7 @@ type CreateTravelPlanInput struct {
 	SortOrder int
 }
 
-func (uc *UseCase) CreateTravelPlan(userID, travelID uint, input CreateTravelPlanInput) (*travel.TravelPlan, error) {
+func (uc *PlanUsecase) CreateTravelPlan(userID, travelID uint, input CreateTravelPlanInput) (*travel.TravelPlan, error) {
 	travelData, err := uc.travelRepository.FindByID(travelID)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
@@ -62,7 +62,7 @@ func (uc *UseCase) CreateTravelPlan(userID, travelID uint, input CreateTravelPla
 	return travelPlan, nil
 }
 
-func (uc *UseCase) GetTravelPlans(userID, travelID uint) ([]travel.TravelPlan, error) {
+func (uc *PlanUsecase) GetTravelPlans(userID, travelID uint) ([]travel.TravelPlan, error) {
 	travelData, err := uc.travelRepository.FindByID(travelID)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
@@ -83,7 +83,7 @@ func (uc *UseCase) GetTravelPlans(userID, travelID uint) ([]travel.TravelPlan, e
 	return travelPlans, nil
 }
 
-func (uc *UseCase) DeleteTravelPlan(userID, travelID, travelPlanID uint) error {
+func (uc *PlanUsecase) DeleteTravelPlan(userID, travelID, travelPlanID uint) error {
 	travelData, err := uc.travelRepository.FindByID(travelID)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
@@ -118,7 +118,7 @@ type UpdateTravelPlanInput struct {
 	SortOrder *int
 }
 
-func (uc *UseCase) UpdateTravelPlan(userID, travelID, travelPlanID uint, input UpdateTravelPlanInput) (*travel.TravelPlan, error) {
+func (uc *PlanUsecase) UpdateTravelPlan(userID, travelID, travelPlanID uint, input UpdateTravelPlanInput) (*travel.TravelPlan, error) {
 	travelData, err := uc.travelRepository.FindByID(travelID)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
@@ -171,7 +171,7 @@ func applyTravelPlanUpdates(travelPlan *travel.TravelPlan, input UpdateTravelPla
 	}
 }
 
-func (uc *UseCase) GetPulicTravelPlan(travelID uint) ([]travel.TravelPlan, error) {
+func (uc *PlanUsecase) GetPulicTravelPlan(travelID uint) ([]travel.TravelPlan, error) {
 	travelData, err := uc.travelRepository.FindByID(travelID)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {

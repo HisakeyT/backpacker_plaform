@@ -119,7 +119,7 @@ func TestUseCase_UpdateTravelPlan(t *testing.T) {
 					},
 				}
 
-				useCase := NewUseCase(travelRepository, repository)
+				useCase := NewPlanUseCase(travelRepository, repository)
 
 				got, err := useCase.UpdateTravelPlan(
 					userID,
@@ -232,7 +232,7 @@ func TestUseCase_UpdateTravelPlan(t *testing.T) {
 					},
 				}
 
-				useCase := NewUseCase(travelRepository, repository)
+				useCase := NewPlanUseCase(travelRepository, repository)
 
 				_, err := useCase.UpdateTravelPlan(
 					userID,
