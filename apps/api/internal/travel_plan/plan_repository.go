@@ -4,7 +4,7 @@ import (
 	"github.com/HisakeyT/backpacker-platform/internal/travel"
 )
 
-type Repository interface {
+type PlanRepository interface {
 	Create(travelPlan *travel.TravelPlan) error
 	Update(travelPlan *travel.TravelPlan) error
 	Delete(id uint) error

@@ -19,7 +19,7 @@ func TestHandler_UpdateTravelPlan(t *testing.T) {
 		travelID   string
 		planID     string
 		request    string
-		repository Repository
+		repository PlanRepository
 		wantStatus int
 	}{
 		{
