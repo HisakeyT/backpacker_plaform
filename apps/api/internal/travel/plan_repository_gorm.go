@@ -1,9 +1,7 @@
-package travel_plan
+package travel
 
 import (
 	"gorm.io/gorm"
-
-	"github.com/HisakeyT/backpacker-platform/internal/travel"
 )
 
 type GormPlanRepository struct {
@@ -14,20 +12,20 @@ func NewGormPlanRepository(db *gorm.DB) *GormPlanRepository {
 	return &GormPlanRepository{db: db}
 }
 
-func (r *GormPlanRepository) Create(travelPlan *travel.TravelPlan) error {
+func (r *GormPlanRepository) Create(travelPlan *TravelPlan) error {
 	return r.db.Create(travelPlan).Error
 }
 
-func (r *GormPlanRepository) Update(travelPlan *travel.TravelPlan) error {
+func (r *GormPlanRepository) Update(travelPlan *TravelPlan) error {
 	return r.db.Save(travelPlan).Error
 }
 
 func (r *GormPlanRepository) Delete(id uint) error {
-	return r.db.Delete(&travel.TravelPlan{}, id).Error
+	return r.db.Delete(&TravelPlan{}, id).Error
 }
 
-func (r *GormPlanRepository) FindByID(id uint) (*travel.TravelPlan, error) {
-	var travelPlan travel.TravelPlan
+func (r *GormPlanRepository) FindByID(id uint) (*TravelPlan, error) {
+	var travelPlan TravelPlan
 
 	result := r.db.First(&travelPlan, id)
 	if result.Error != nil {
@@ -37,8 +35,8 @@ func (r *GormPlanRepository) FindByID(id uint) (*travel.TravelPlan, error) {
 	return &travelPlan, nil
 }
 
-func (r *GormPlanRepository) FindByTravelID(travelID uint) ([]travel.TravelPlan, error) {
-	var travelPlans []travel.TravelPlan
+func (r *GormPlanRepository) FindByTravelID(travelID uint) ([]TravelPlan, error) {
+	var travelPlans []TravelPlan
 
 	result := r.db.Where("travel_id = ?", travelID).Find(&travelPlans)
 	if result.Error != nil {

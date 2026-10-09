@@ -15,12 +15,12 @@ type TravelRepository interface {
 
 type UseCase struct {
 	travelRepository     TravelRepository
-	travelPlanRepository PlanRepository
+	travelPlanRepository travel.PlanRepository
 }
 
 func NewUseCase(
 	travelRepository TravelRepository,
-	travelPlanRepository PlanRepository,
+	travelPlanRepository travel.PlanRepository,
 ) *UseCase {
 	return &UseCase{
 		travelRepository:     travelRepository,
