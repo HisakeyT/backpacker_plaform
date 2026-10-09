@@ -35,8 +35,8 @@ func TestHandler_GetTravelPlans(t *testing.T) {
 				}
 
 				travelPlanRepository := &MockRepository{
-					FindByTravelIDFunc: func(id uint) ([]TravelPlan, error) {
-						return []TravelPlan{
+					FindByTravelIDFunc: func(id uint) ([]travel.TravelPlan, error) {
+						return []travel.TravelPlan{
 							{
 								ID:        1,
 								TravelID:  10,
@@ -74,8 +74,8 @@ func TestHandler_GetTravelPlans(t *testing.T) {
 				}
 
 				travelPlanRepository := &MockRepository{
-					FindByTravelIDFunc: func(id uint) ([]TravelPlan, error) {
-						return []TravelPlan{}, nil
+					FindByTravelIDFunc: func(id uint) ([]travel.TravelPlan, error) {
+						return []travel.TravelPlan{}, nil
 					},
 				}
 

@@ -5,21 +5,21 @@ import (
 )
 
 type MockRepository struct {
-	CreateFunc         func(travelPlan *TravelPlan) error
-	UpdateFunc         func(travelPlan *TravelPlan) error
+	CreateFunc         func(travelPlan *travel.TravelPlan) error
+	UpdateFunc         func(travelPlan *travel.TravelPlan) error
 	DeleteFunc         func(id uint) error
-	FindByIDFunc       func(id uint) (*TravelPlan, error)
-	FindByTravelIDFunc func(travelID uint) ([]TravelPlan, error)
+	FindByIDFunc       func(id uint) (*travel.TravelPlan, error)
+	FindByTravelIDFunc func(travelID uint) ([]travel.TravelPlan, error)
 }
 
-func (m *MockRepository) Create(travelPlan *TravelPlan) error {
+func (m *MockRepository) Create(travelPlan *travel.TravelPlan) error {
 	if m.CreateFunc != nil {
 		return m.CreateFunc(travelPlan)
 	}
 	return nil
 }
 
-func (m *MockRepository) Update(travelPlan *TravelPlan) error {
+func (m *MockRepository) Update(travelPlan *travel.TravelPlan) error {
 	if m.UpdateFunc != nil {
 		return m.UpdateFunc(travelPlan)
 	}
@@ -35,7 +35,7 @@ func (m *MockRepository) Delete(id uint) error {
 	return nil
 }
 
-func (m *MockRepository) FindByID(id uint) (*TravelPlan, error) {
+func (m *MockRepository) FindByID(id uint) (*travel.TravelPlan, error) {
 	if m.FindByIDFunc != nil {
 		return m.FindByIDFunc(id)
 	}
@@ -43,7 +43,7 @@ func (m *MockRepository) FindByID(id uint) (*TravelPlan, error) {
 	return nil, nil
 }
 
-func (m *MockRepository) FindByTravelID(travelID uint) ([]TravelPlan, error) {
+func (m *MockRepository) FindByTravelID(travelID uint) ([]travel.TravelPlan, error) {
 	if m.FindByTravelIDFunc != nil {
 		return m.FindByTravelIDFunc(travelID)
 	}

@@ -17,12 +17,12 @@ func TestUseCase_GetTravelPlans(t *testing.T) {
 	t.Run("正常系", func(t *testing.T) {
 		tests := []struct {
 			name          string
-			travelPlans   []TravelPlan
+			travelPlans   []travel.TravelPlan
 			expectedCount int
 		}{
 			{
 				name: "TravelPlanを複数件取得できる",
-				travelPlans: []TravelPlan{
+				travelPlans: []travel.TravelPlan{
 					{
 						ID:        1,
 						TravelID:  travelID,
@@ -44,7 +44,7 @@ func TestUseCase_GetTravelPlans(t *testing.T) {
 			},
 			{
 				name:          "TravelPlanが0件でも取得できる",
-				travelPlans:   []TravelPlan{},
+				travelPlans:   []travel.TravelPlan{},
 				expectedCount: 0,
 			},
 		}
@@ -64,7 +64,7 @@ func TestUseCase_GetTravelPlans(t *testing.T) {
 				}
 
 				travelPlanRepository := &MockRepository{
-					FindByTravelIDFunc: func(id uint) ([]TravelPlan, error) {
+					FindByTravelIDFunc: func(id uint) ([]travel.TravelPlan, error) {
 						return tt.travelPlans, nil
 					},
 				}

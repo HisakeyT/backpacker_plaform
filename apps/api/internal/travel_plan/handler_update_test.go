@@ -28,8 +28,8 @@ func TestHandler_UpdateTravelPlan(t *testing.T) {
 			planID:   "1",
 			request:  `{"date":"2026-10-02"}`,
 			repository: &MockRepository{
-				FindByIDFunc: func(id uint) (*TravelPlan, error) {
-					return &TravelPlan{
+				FindByIDFunc: func(id uint) (*travel.TravelPlan, error) {
+					return &travel.TravelPlan{
 						ID:        1,
 						TravelID:  1,
 						Date:      time.Date(2026, 10, 1, 0, 0, 0, 0, time.UTC),
@@ -38,7 +38,7 @@ func TestHandler_UpdateTravelPlan(t *testing.T) {
 						SortOrder: 1,
 					}, nil
 				},
-				UpdateFunc: func(travelPlan *TravelPlan) error {
+				UpdateFunc: func(travelPlan *travel.TravelPlan) error {
 					return nil
 				},
 			},
@@ -50,8 +50,8 @@ func TestHandler_UpdateTravelPlan(t *testing.T) {
 			planID:   "1",
 			request:  `{"place":"チェンマイ"}`,
 			repository: &MockRepository{
-				FindByIDFunc: func(id uint) (*TravelPlan, error) {
-					return &TravelPlan{
+				FindByIDFunc: func(id uint) (*travel.TravelPlan, error) {
+					return &travel.TravelPlan{
 						ID:        1,
 						TravelID:  1,
 						Date:      time.Date(2026, 10, 1, 0, 0, 0, 0, time.UTC),
@@ -60,7 +60,7 @@ func TestHandler_UpdateTravelPlan(t *testing.T) {
 						SortOrder: 1,
 					}, nil
 				},
-				UpdateFunc: func(travelPlan *TravelPlan) error {
+				UpdateFunc: func(travelPlan *travel.TravelPlan) error {
 					return nil
 				},
 			},
@@ -72,8 +72,8 @@ func TestHandler_UpdateTravelPlan(t *testing.T) {
 			planID:   "1",
 			request:  `{"content":"ワット・プラ・シン"}`,
 			repository: &MockRepository{
-				FindByIDFunc: func(id uint) (*TravelPlan, error) {
-					return &TravelPlan{
+				FindByIDFunc: func(id uint) (*travel.TravelPlan, error) {
+					return &travel.TravelPlan{
 						ID:        1,
 						TravelID:  1,
 						Date:      time.Date(2026, 10, 1, 0, 0, 0, 0, time.UTC),
@@ -82,7 +82,7 @@ func TestHandler_UpdateTravelPlan(t *testing.T) {
 						SortOrder: 1,
 					}, nil
 				},
-				UpdateFunc: func(travelPlan *TravelPlan) error {
+				UpdateFunc: func(travelPlan *travel.TravelPlan) error {
 					return nil
 				},
 			},
@@ -94,8 +94,8 @@ func TestHandler_UpdateTravelPlan(t *testing.T) {
 			planID:   "1",
 			request:  `{"sort_order":2}`,
 			repository: &MockRepository{
-				FindByIDFunc: func(id uint) (*TravelPlan, error) {
-					return &TravelPlan{
+				FindByIDFunc: func(id uint) (*travel.TravelPlan, error) {
+					return &travel.TravelPlan{
 						ID:        1,
 						TravelID:  1,
 						Date:      time.Date(2026, 10, 1, 0, 0, 0, 0, time.UTC),
@@ -104,7 +104,7 @@ func TestHandler_UpdateTravelPlan(t *testing.T) {
 						SortOrder: 1,
 					}, nil
 				},
-				UpdateFunc: func(travelPlan *TravelPlan) error {
+				UpdateFunc: func(travelPlan *travel.TravelPlan) error {
 					return nil
 				},
 			},

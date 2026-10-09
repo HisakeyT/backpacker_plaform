@@ -181,14 +181,14 @@ func (h *Handler) UpdateTravelPlan(c *gin.Context) {
 			return
 		}
 
-		if errors.Is(err, ErrTravelPlanNotFound) {
+		if errors.Is(err, travel.ErrTravelPlanNotFound) {
 			c.JSON(http.StatusNotFound, gin.H{
 				"error": err.Error(),
 			})
 			return
 		}
 
-		if errors.Is(err, ErrTravelPlanNotBelongToTravel) {
+		if errors.Is(err, travel.ErrTravelPlanNotBelongToTravel) {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"error": err.Error(),
 			})
@@ -271,12 +271,12 @@ func (h *Handler) DeleteTravelPlan(c *gin.Context) {
 			return
 		}
 
-		if errors.Is(err, ErrTravelPlanNotFound) {
+		if errors.Is(err, travel.ErrTravelPlanNotFound) {
 			c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
 			return
 		}
 
-		if errors.Is(err, ErrTravelPlanNotBelongToTravel) {
+		if errors.Is(err, travel.ErrTravelPlanNotBelongToTravel) {
 			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 			return
 		}

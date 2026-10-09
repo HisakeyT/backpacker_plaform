@@ -36,7 +36,7 @@ func TestUseCase_CreateTravelPlan(t *testing.T) {
 		}
 
 		travelPlanRepository := &MockRepository{
-			CreateFunc: func(travelPlan *TravelPlan) error {
+			CreateFunc: func(travelPlan *travel.TravelPlan) error {
 				return nil
 			},
 		}
@@ -112,7 +112,7 @@ func TestUseCase_CreateTravelPlan_Invalid(t *testing.T) {
 			}
 
 			travelPlanRepository := &MockRepository{
-				CreateFunc: func(travelPlan *TravelPlan) error {
+				CreateFunc: func(travelPlan *travel.TravelPlan) error {
 					t.Fatal("Create should not be called")
 					return nil
 				},

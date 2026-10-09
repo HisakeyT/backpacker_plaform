@@ -43,7 +43,7 @@ func TestHandler_CreateTravelPlan(t *testing.T) {
 				}
 
 				travelPlanRepository := &MockRepository{
-					CreateFunc: func(travelPlan *TravelPlan) error {
+					CreateFunc: func(travelPlan *travel.TravelPlan) error {
 						return nil
 					},
 				}

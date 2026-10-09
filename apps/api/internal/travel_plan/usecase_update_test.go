@@ -32,14 +32,14 @@ func TestUseCase_UpdateTravelPlan(t *testing.T) {
 		tests := []struct {
 			name        string
 			updateInput UpdateTravelPlanInput
-			want        *TravelPlan
+			want        *travel.TravelPlan
 		}{
 			{
 				name: "日付を更新する",
 				updateInput: UpdateTravelPlanInput{
 					Date: &newDate,
 				},
-				want: &TravelPlan{
+				want: &travel.TravelPlan{
 					ID:        travelPlanID,
 					TravelID:  travelID,
 					Date:      newDate,
@@ -53,7 +53,7 @@ func TestUseCase_UpdateTravelPlan(t *testing.T) {
 				updateInput: UpdateTravelPlanInput{
 					Place: &newPlace,
 				},
-				want: &TravelPlan{
+				want: &travel.TravelPlan{
 					ID:        travelPlanID,
 					TravelID:  travelID,
 					Date:      date,
@@ -67,7 +67,7 @@ func TestUseCase_UpdateTravelPlan(t *testing.T) {
 				updateInput: UpdateTravelPlanInput{
 					Content: &newContent,
 				},
-				want: &TravelPlan{
+				want: &travel.TravelPlan{
 					ID:        travelPlanID,
 					TravelID:  travelID,
 					Date:      date,
@@ -81,7 +81,7 @@ func TestUseCase_UpdateTravelPlan(t *testing.T) {
 				updateInput: UpdateTravelPlanInput{
 					SortOrder: &newSortOrder,
 				},
-				want: &TravelPlan{
+				want: &travel.TravelPlan{
 					ID:        travelPlanID,
 					TravelID:  travelID,
 					Date:      date,
@@ -95,8 +95,8 @@ func TestUseCase_UpdateTravelPlan(t *testing.T) {
 		for _, tt := range tests {
 			t.Run(tt.name, func(t *testing.T) {
 				repository := &MockRepository{
-					FindByIDFunc: func(id uint) (*TravelPlan, error) {
-						return &TravelPlan{
+					FindByIDFunc: func(id uint) (*travel.TravelPlan, error) {
+						return &travel.TravelPlan{
 							ID:        travelPlanID,
 							TravelID:  travelID,
 							Date:      date,
@@ -105,7 +105,7 @@ func TestUseCase_UpdateTravelPlan(t *testing.T) {
 							SortOrder: sortOrder,
 						}, nil
 					},
-					UpdateFunc: func(travelPlan *TravelPlan) error {
+					UpdateFunc: func(travelPlan *travel.TravelPlan) error {
 						return nil
 					},
 				}
@@ -147,7 +147,7 @@ func TestUseCase_UpdateTravelPlan(t *testing.T) {
 			name                    string
 			travelRepository        *travel.Travel
 			travelRepositoryErr     error
-			travelPlanRepository    *TravelPlan
+			travelPlanRepository    *travel.TravelPlan
 			travelPlanRepositoryErr error
 			updateErr               error
 			wantErr                 error
@@ -177,7 +177,7 @@ func TestUseCase_UpdateTravelPlan(t *testing.T) {
 					UserID: userID,
 				},
 				travelPlanRepositoryErr: gorm.ErrRecordNotFound,
-				wantErr:                 ErrTravelPlanNotFound,
+				wantErr:                 travel.ErrTravelPlanNotFound,
 			},
 			{
 				name: "TravelPlanのRepositoryでエラーが発生する",
@@ -194,11 +194,11 @@ func TestUseCase_UpdateTravelPlan(t *testing.T) {
 					ID:     travelID,
 					UserID: userID,
 				},
-				travelPlanRepository: &TravelPlan{
+				travelPlanRepository: &travel.TravelPlan{
 					ID:       travelPlanID,
 					TravelID: 2,
 				},
-				wantErr: ErrTravelPlanNotBelongToTravel,
+				wantErr: travel.ErrTravelPlanNotBelongToTravel,
 			},
 			{
 				name: "TravelPlanのUpdateでエラーが発生する",
@@ -206,7 +206,7 @@ func TestUseCase_UpdateTravelPlan(t *testing.T) {
 					ID:     travelID,
 					UserID: userID,
 				},
-				travelPlanRepository: &TravelPlan{
+				travelPlanRepository: &travel.TravelPlan{
 					ID:       travelPlanID,
 					TravelID: travelID,
 				},
@@ -218,10 +218,10 @@ func TestUseCase_UpdateTravelPlan(t *testing.T) {
 		for _, tt := range tests {
 			t.Run(tt.name, func(t *testing.T) {
 				repository := &MockRepository{
-					FindByIDFunc: func(id uint) (*TravelPlan, error) {
+					FindByIDFunc: func(id uint) (*travel.TravelPlan, error) {
 						return tt.travelPlanRepository, tt.travelPlanRepositoryErr
 					},
-					UpdateFunc: func(travelPlan *TravelPlan) error {
+					UpdateFunc: func(travelPlan *travel.TravelPlan) error {
 						return tt.updateErr
 					},
 				}

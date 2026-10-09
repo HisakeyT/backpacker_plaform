@@ -1,4 +1,4 @@
-package travel_plan
+package travel
 
 import (
 	"errors"
