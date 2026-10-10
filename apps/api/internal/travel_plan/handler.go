@@ -13,12 +13,12 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type Handler struct {
+type PlanHandler struct {
 	useCase *travel.PlanUseCase
 }
 
-func NewHandler(useCase *travel.PlanUseCase) *Handler {
-	return &Handler{
+func NewPlanHandler(useCase *travel.PlanUseCase) *PlanHandler {
+	return &PlanHandler{
 		useCase: useCase,
 	}
 }
@@ -30,7 +30,7 @@ type CreateTravelPlanRequest struct {
 	SortOrder int    `json:"sort_order"`
 }
 
-func (h *Handler) CreateTravelPlan(c *gin.Context) {
+func (h *PlanHandler) CreateTravelPlan(c *gin.Context) {
 	userID := c.GetUint("userID")
 
 	travelID, err := strconv.ParseUint(c.Param("travel_id"), 10, 64)
@@ -101,7 +101,7 @@ type UpdateTravelPlanRequest struct {
 	SortOrder *int    `json:"sort_order"`
 }
 
-func (h *Handler) UpdateTravelPlan(c *gin.Context) {
+func (h *PlanHandler) UpdateTravelPlan(c *gin.Context) {
 	userID := c.GetUint("userID")
 
 	travelPlanID64, err := strconv.ParseUint(c.Param("travel_plan_id"), 10, 64)
@@ -204,7 +204,7 @@ func (h *Handler) UpdateTravelPlan(c *gin.Context) {
 	c.JSON(http.StatusOK, toTravelPlanResponse(*travelPlan))
 }
 
-func (h *Handler) GetTravelPlans(c *gin.Context) {
+func (h *PlanHandler) GetTravelPlans(c *gin.Context) {
 	userID := c.GetUint("userID")
 
 	travelID, err := strconv.ParseUint(c.Param("travel_id"), 10, 64)
@@ -240,7 +240,7 @@ func (h *Handler) GetTravelPlans(c *gin.Context) {
 	c.JSON(http.StatusOK, response.MapSlice(travelPlans, toTravelPlanResponse))
 }
 
-func (h *Handler) DeleteTravelPlan(c *gin.Context) {
+func (h *PlanHandler) DeleteTravelPlan(c *gin.Context) {
 	userID := c.GetUint("userID")
 
 	travelPlanID64, err := strconv.ParseUint(c.Param("travel_plan_id"), 10, 64)
@@ -288,7 +288,7 @@ func (h *Handler) DeleteTravelPlan(c *gin.Context) {
 	c.Status(http.StatusNoContent)
 }
 
-func (h *Handler) GetPublicTravelPlan(c *gin.Context) {
+func (h *PlanHandler) GetPublicTravelPlan(c *gin.Context) {
 	travelID, err := strconv.ParseUint(c.Param("travel_id"), 10, 64)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{

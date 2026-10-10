@@ -160,7 +160,7 @@ func TestHandler_UpdateTravelPlan(t *testing.T) {
 			}
 
 			useCase := travel.NewPlanUseCase(travelRepository, tt.repository)
-			handler := NewHandler(useCase)
+			handler := NewPlanHandler(useCase)
 
 			router.PATCH(
 				"/travels/:travel_id/plans/:travel_plan_id",

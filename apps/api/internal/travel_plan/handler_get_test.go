@@ -140,7 +140,7 @@ func TestHandler_GetTravelPlans(t *testing.T) {
 				travelPlanRepository,
 			)
 
-			handler := NewHandler(useCase)
+			handler := NewPlanHandler(useCase)
 
 			recorder := httptest.NewRecorder()
 			c, _ := gin.CreateTestContext(recorder)
