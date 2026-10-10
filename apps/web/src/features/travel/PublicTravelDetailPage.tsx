@@ -107,7 +107,7 @@ export const PublicTravelDetailPage = () => {
         description={`「${travel.title}」のプランを、あなたの旅行としてコピーします。元の旅行は変わりません。コピーした旅行は非公開で、あとから自由に編集できます。日付は元のままなので、旅行の予定に合わせて直してください。`}
         error={copyError}
         busy={isCopying}
-        confirmLabel="コピーする"
+        confirmLabel={copyButtonLabel}
         busyLabel="コピー中..."
         onClose={() => setIsConfirmOpen(false)}
         onConfirm={handleConfirmCopy}
