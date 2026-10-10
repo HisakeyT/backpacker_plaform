@@ -163,7 +163,7 @@ func (u *UseCase) DeleteTravel(userID uint, travelID uint) error {
 }
 
 func (uc *UseCase) CopyTravel(userID, travelID uint) (*Travel, error) {
-	src, err := uc.repository.FindByID(travelID)
+	originalTravel, err := uc.repository.FindByID(travelID)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, ErrTravelNotFound
@@ -172,9 +172,9 @@ func (uc *UseCase) CopyTravel(userID, travelID uint) (*Travel, error) {
 	}
 
 	// 非公開かつ他人の旅行は存在しない扱い
-	if !src.IsPublic && src.UserID != userID {
+	if !originalTravel.IsPublic && originalTravel.UserID != userID {
 		return nil, ErrTravelNotFound
 	}
 
-	return uc.repository.CopyTravel(src, userID)
+	return uc.repository.CopyTravel(originalTravel, userID)
 }
