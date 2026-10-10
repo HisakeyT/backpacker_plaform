@@ -8,6 +8,7 @@ type MockRepository struct {
 	FindPublicTravelsFunc func() ([]*PublicTravel, error)
 	FindPublicByIDFunc    func(id uint) (*PublicTravel, error)
 	DeleteFunc            func(id uint) error
+	CopyTravelFunc        func(originalTravel *Travel, newUserID uint) (*Travel, error)
 }
 
 func (m *MockRepository) Create(travel *Travel) error {
@@ -62,4 +63,12 @@ func (m *MockRepository) Delete(id uint) error {
 		return m.DeleteFunc(id)
 	}
 	return nil
+}
+
+func (m *MockRepository) CopyTravel(originalTravel *Travel, newUserID uint) (*Travel, error) {
+	if m.CopyTravelFunc != nil {
+		return m.CopyTravelFunc(originalTravel, newUserID)
+	}
+
+	return nil, nil
 }

@@ -8,4 +8,5 @@ type Repository interface {
 	FindPublicTravels() ([]*PublicTravel, error)
 	FindPublicByID(id uint) (*PublicTravel, error)
 	Delete(id uint) error
+	CopyTravel(originalTravel *Travel, newUserID uint) (*Travel, error)
 }

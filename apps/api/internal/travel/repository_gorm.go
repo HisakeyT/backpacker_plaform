@@ -79,3 +79,45 @@ func (r *GormRepository) FindPublicByID(id uint) (*PublicTravel, error) {
 
 	return &publicTravel, nil
 }
+
+func (r *GormRepository) CopyTravel(originalTravel *Travel, newUserID uint) (*Travel, error) {
+	var createdTravel Travel
+
+	err := r.db.Transaction(func(tx *gorm.DB) error {
+		createdTravel = Travel{
+			UserID:             newUserID,
+			Title:              originalTravel.Title,
+			StartDate:          originalTravel.StartDate,
+			EndDate:            originalTravel.EndDate,
+			CopiedFromTravelID: &originalTravel.ID,
+		}
+		if err := tx.Create(&createdTravel).Error; err != nil {
+			return err
+		}
+
+		var travelPlans []TravelPlan
+		if err := tx.Where("travel_id = ?", originalTravel.ID).Find(&travelPlans).Error; err != nil {
+			return err
+		}
+		if len(travelPlans) == 0 {
+			return nil
+		}
+
+		copiedPlans := make([]TravelPlan, len(travelPlans))
+		for i, plan := range travelPlans {
+			copiedPlans[i] = TravelPlan{
+				TravelID:  createdTravel.ID,
+				Date:      plan.Date,
+				Place:     plan.Place,
+				Content:   plan.Content,
+				SortOrder: plan.SortOrder,
+			}
+		}
+		return tx.Create(&copiedPlans).Error
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	return &createdTravel, nil
+}
