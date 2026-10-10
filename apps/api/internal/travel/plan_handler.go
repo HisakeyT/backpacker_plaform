@@ -1,4 +1,4 @@
-package travel_plan
+package travel
 
 import (
 	"errors"
@@ -8,16 +8,15 @@ import (
 	"time"
 
 	"github.com/HisakeyT/backpacker-platform/internal/response"
-	"github.com/HisakeyT/backpacker-platform/internal/travel"
 	"github.com/HisakeyT/backpacker-platform/internal/user"
 	"github.com/gin-gonic/gin"
 )
 
 type PlanHandler struct {
-	useCase *travel.PlanUseCase
+	useCase *PlanUseCase
 }
 
-func NewPlanHandler(useCase *travel.PlanUseCase) *PlanHandler {
+func NewPlanHandler(useCase *PlanUseCase) *PlanHandler {
 	return &PlanHandler{
 		useCase: useCase,
 	}
@@ -57,7 +56,7 @@ func (h *PlanHandler) CreateTravelPlan(c *gin.Context) {
 		return
 	}
 
-	input := travel.CreateTravelPlanInput{
+	input := CreateTravelPlanInput{
 		Date:      date,
 		Place:     req.Place,
 		Content:   req.Content,
@@ -71,7 +70,7 @@ func (h *PlanHandler) CreateTravelPlan(c *gin.Context) {
 	)
 
 	if err != nil {
-		if errors.Is(err, travel.ErrTravelNotFound) {
+		if errors.Is(err, ErrTravelNotFound) {
 			c.JSON(http.StatusNotFound, gin.H{
 				"error": err.Error(),
 			})
@@ -158,7 +157,7 @@ func (h *PlanHandler) UpdateTravelPlan(c *gin.Context) {
 		date = &parsed
 	}
 
-	updateInput := travel.UpdateTravelPlanInput{
+	updateInput := UpdateTravelPlanInput{
 		Date:      date,
 		Place:     updateReq.Place,
 		Content:   updateReq.Content,
@@ -167,7 +166,7 @@ func (h *PlanHandler) UpdateTravelPlan(c *gin.Context) {
 
 	travelPlan, err := h.useCase.UpdateTravelPlan(userID, travelID, travelPlanID, updateInput)
 	if err != nil {
-		if errors.Is(err, travel.ErrTravelNotFound) {
+		if errors.Is(err, ErrTravelNotFound) {
 			c.JSON(http.StatusNotFound, gin.H{
 				"error": err.Error(),
 			})
@@ -181,14 +180,14 @@ func (h *PlanHandler) UpdateTravelPlan(c *gin.Context) {
 			return
 		}
 
-		if errors.Is(err, travel.ErrTravelPlanNotFound) {
+		if errors.Is(err, ErrTravelPlanNotFound) {
 			c.JSON(http.StatusNotFound, gin.H{
 				"error": err.Error(),
 			})
 			return
 		}
 
-		if errors.Is(err, travel.ErrTravelPlanNotBelongToTravel) {
+		if errors.Is(err, ErrTravelPlanNotBelongToTravel) {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"error": err.Error(),
 			})
@@ -217,7 +216,7 @@ func (h *PlanHandler) GetTravelPlans(c *gin.Context) {
 
 	travelPlans, err := h.useCase.GetTravelPlans(userID, uint(travelID))
 	if err != nil {
-		if errors.Is(err, travel.ErrTravelNotFound) {
+		if errors.Is(err, ErrTravelNotFound) {
 			c.JSON(http.StatusNotFound, gin.H{
 				"error": err.Error(),
 			})
@@ -261,7 +260,7 @@ func (h *PlanHandler) DeleteTravelPlan(c *gin.Context) {
 
 	err = h.useCase.DeleteTravelPlan(userID, uint(travelID64), uint(travelPlanID64))
 	if err != nil {
-		if errors.Is(err, travel.ErrTravelNotFound) {
+		if errors.Is(err, ErrTravelNotFound) {
 			c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
 			return
 		}
@@ -271,12 +270,12 @@ func (h *PlanHandler) DeleteTravelPlan(c *gin.Context) {
 			return
 		}
 
-		if errors.Is(err, travel.ErrTravelPlanNotFound) {
+		if errors.Is(err, ErrTravelPlanNotFound) {
 			c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
 			return
 		}
 
-		if errors.Is(err, travel.ErrTravelPlanNotBelongToTravel) {
+		if errors.Is(err, ErrTravelPlanNotBelongToTravel) {
 			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 			return
 		}
@@ -299,7 +298,7 @@ func (h *PlanHandler) GetPublicTravelPlan(c *gin.Context) {
 
 	travelPlans, err := h.useCase.GetPulicTravelPlan(uint(travelID))
 	if err != nil {
-		if errors.Is(err, travel.ErrTravelNotFound) {
+		if errors.Is(err, ErrTravelNotFound) {
 			c.JSON(http.StatusNotFound, gin.H{
 				"error": err.Error(),
 			})

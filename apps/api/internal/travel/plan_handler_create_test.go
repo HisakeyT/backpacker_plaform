@@ -1,4 +1,4 @@
-package travel_plan
+package travel
 
 import (
 	"net/http"
@@ -6,7 +6,6 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/HisakeyT/backpacker-platform/internal/travel"
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 )
@@ -19,7 +18,7 @@ func TestHandler_CreateTravelPlan(t *testing.T) {
 		userID          uint
 		travelID        string
 		body            string
-		setupRepository func() (*MockTravelRepository, *MockRepository)
+		setupRepository func() (*MockTravelRepository, *MockPlanRepository)
 		wantStatus      int
 	}{
 		{
@@ -32,18 +31,18 @@ func TestHandler_CreateTravelPlan(t *testing.T) {
 				"content": "ワット・ポーを観光",
 				"sort_order": 1
 			}`,
-			setupRepository: func() (*MockTravelRepository, *MockRepository) {
+			setupRepository: func() (*MockTravelRepository, *MockPlanRepository) {
 				travelRepository := &MockTravelRepository{
-					FindByIDFunc: func(id uint) (*travel.Travel, error) {
-						return &travel.Travel{
+					FindByIDFunc: func(id uint) (*Travel, error) {
+						return &Travel{
 							ID:     10,
 							UserID: 1,
 						}, nil
 					},
 				}
 
-				travelPlanRepository := &MockRepository{
-					CreateFunc: func(travelPlan *travel.TravelPlan) error {
+				travelPlanRepository := &MockPlanRepository{
+					CreateFunc: func(travelPlan *TravelPlan) error {
 						return nil
 					},
 				}
@@ -62,14 +61,14 @@ func TestHandler_CreateTravelPlan(t *testing.T) {
 				"content": "ワット・ポーを観光",
 				"sort_order": 1
 			}`,
-			setupRepository: func() (*MockTravelRepository, *MockRepository) {
+			setupRepository: func() (*MockTravelRepository, *MockPlanRepository) {
 				travelRepository := &MockTravelRepository{
-					FindByIDFunc: func(id uint) (*travel.Travel, error) {
+					FindByIDFunc: func(id uint) (*Travel, error) {
 						return nil, gorm.ErrRecordNotFound
 					},
 				}
 
-				travelPlanRepository := &MockRepository{}
+				travelPlanRepository := &MockPlanRepository{}
 
 				return travelRepository, travelPlanRepository
 			},
@@ -85,17 +84,17 @@ func TestHandler_CreateTravelPlan(t *testing.T) {
 				"content": "ワット・ポーを観光",
 				"sort_order": 1
 			}`,
-			setupRepository: func() (*MockTravelRepository, *MockRepository) {
+			setupRepository: func() (*MockTravelRepository, *MockPlanRepository) {
 				travelRepository := &MockTravelRepository{
-					FindByIDFunc: func(id uint) (*travel.Travel, error) {
-						return &travel.Travel{
+					FindByIDFunc: func(id uint) (*Travel, error) {
+						return &Travel{
 							ID:     10,
 							UserID: 999,
 						}, nil
 					},
 				}
 
-				travelPlanRepository := &MockRepository{}
+				travelPlanRepository := &MockPlanRepository{}
 
 				return travelRepository, travelPlanRepository
 			},
@@ -106,8 +105,8 @@ func TestHandler_CreateTravelPlan(t *testing.T) {
 			userID:   1,
 			travelID: "10",
 			body:     `{"date":`,
-			setupRepository: func() (*MockTravelRepository, *MockRepository) {
-				return &MockTravelRepository{}, &MockRepository{}
+			setupRepository: func() (*MockTravelRepository, *MockPlanRepository) {
+				return &MockTravelRepository{}, &MockPlanRepository{}
 			},
 			wantStatus: http.StatusBadRequest,
 		},
@@ -121,8 +120,8 @@ func TestHandler_CreateTravelPlan(t *testing.T) {
 				"content": "ワット・ポーを観光",
 				"sort_order": 1
 			}`,
-			setupRepository: func() (*MockTravelRepository, *MockRepository) {
-				return &MockTravelRepository{}, &MockRepository{}
+			setupRepository: func() (*MockTravelRepository, *MockPlanRepository) {
+				return &MockTravelRepository{}, &MockPlanRepository{}
 			},
 			wantStatus: http.StatusBadRequest,
 		},
@@ -136,15 +135,15 @@ func TestHandler_CreateTravelPlan(t *testing.T) {
 				"content": "ワット・ポーを観光",
 				"sort_order": 1
 			}`,
-			setupRepository: func() (*MockTravelRepository, *MockRepository) {
+			setupRepository: func() (*MockTravelRepository, *MockPlanRepository) {
 				return &MockTravelRepository{
-					FindByIDFunc: func(id uint) (*travel.Travel, error) {
-						return &travel.Travel{
+					FindByIDFunc: func(id uint) (*Travel, error) {
+						return &Travel{
 							ID:     10,
 							UserID: 1,
 						}, nil
 					},
-				}, &MockRepository{}
+				}, &MockPlanRepository{}
 			},
 			wantStatus: http.StatusBadRequest,
 		},
@@ -154,7 +153,7 @@ func TestHandler_CreateTravelPlan(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			travelRepository, travelPlanRepository := tt.setupRepository()
 
-			useCase := travel.NewPlanUseCase(
+			useCase := NewPlanUseCase(
 				travelRepository,
 				travelPlanRepository,
 			)

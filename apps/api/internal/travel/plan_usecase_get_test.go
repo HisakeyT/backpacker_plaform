@@ -1,4 +1,4 @@
-package travel_plan
+package travel
 
 import (
 	"errors"
@@ -6,7 +6,6 @@ import (
 	"testing"
 	"time"
 
-	"github.com/HisakeyT/backpacker-platform/internal/travel"
 	"github.com/HisakeyT/backpacker-platform/internal/user"
 )
 
@@ -17,12 +16,12 @@ func TestUseCase_GetTravelPlans(t *testing.T) {
 	t.Run("正常系", func(t *testing.T) {
 		tests := []struct {
 			name          string
-			travelPlans   []travel.TravelPlan
+			travelPlans   []TravelPlan
 			expectedCount int
 		}{
 			{
 				name: "TravelPlanを複数件取得できる",
-				travelPlans: []travel.TravelPlan{
+				travelPlans: []TravelPlan{
 					{
 						ID:        1,
 						TravelID:  travelID,
@@ -44,7 +43,7 @@ func TestUseCase_GetTravelPlans(t *testing.T) {
 			},
 			{
 				name:          "TravelPlanが0件でも取得できる",
-				travelPlans:   []travel.TravelPlan{},
+				travelPlans:   []TravelPlan{},
 				expectedCount: 0,
 			},
 		}
@@ -52,24 +51,24 @@ func TestUseCase_GetTravelPlans(t *testing.T) {
 		for _, tt := range tests {
 			t.Run(tt.name, func(t *testing.T) {
 				// Arrange
-				travelData := &travel.Travel{
+				travelData := &Travel{
 					ID:     travelID,
 					UserID: userID,
 				}
 
 				travelRepository := &MockTravelRepository{
-					FindByIDFunc: func(id uint) (*travel.Travel, error) {
+					FindByIDFunc: func(id uint) (*Travel, error) {
 						return travelData, nil
 					},
 				}
 
-				travelPlanRepository := &MockRepository{
-					FindByTravelIDFunc: func(id uint) ([]travel.TravelPlan, error) {
+				travelPlanRepository := &MockPlanRepository{
+					FindByTravelIDFunc: func(id uint) ([]TravelPlan, error) {
 						return tt.travelPlans, nil
 					},
 				}
 
-				useCase := travel.NewPlanUseCase(
+				useCase := NewPlanUseCase(
 					travelRepository,
 					travelPlanRepository,
 				)
@@ -96,18 +95,18 @@ func TestUseCase_GetTravelPlans(t *testing.T) {
 	t.Run("異常系", func(t *testing.T) {
 		tests := []struct {
 			name          string
-			travelData    *travel.Travel
+			travelData    *Travel
 			findByIDError error
 			expectedError error
 		}{
 			{
 				name:          "Travelが存在しない",
 				findByIDError: gorm.ErrRecordNotFound,
-				expectedError: travel.ErrTravelNotFound,
+				expectedError: ErrTravelNotFound,
 			},
 			{
 				name: "自分のTravelではない",
-				travelData: &travel.Travel{
+				travelData: &Travel{
 					ID:     travelID,
 					UserID: 999,
 				},
@@ -119,14 +118,14 @@ func TestUseCase_GetTravelPlans(t *testing.T) {
 			t.Run(tt.name, func(t *testing.T) {
 				// Arrange
 				travelRepository := &MockTravelRepository{
-					FindByIDFunc: func(id uint) (*travel.Travel, error) {
+					FindByIDFunc: func(id uint) (*Travel, error) {
 						return tt.travelData, tt.findByIDError
 					},
 				}
 
-				travelPlanRepository := &MockRepository{}
+				travelPlanRepository := &MockPlanRepository{}
 
-				useCase := travel.NewPlanUseCase(
+				useCase := NewPlanUseCase(
 					travelRepository,
 					travelPlanRepository,
 				)

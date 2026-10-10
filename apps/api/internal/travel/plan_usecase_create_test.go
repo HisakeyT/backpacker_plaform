@@ -1,11 +1,10 @@
-package travel_plan
+package travel
 
 import (
 	"errors"
 	"testing"
 	"time"
 
-	"github.com/HisakeyT/backpacker-platform/internal/travel"
 	"github.com/HisakeyT/backpacker-platform/internal/user"
 )
 
@@ -17,31 +16,31 @@ func TestUseCase_CreateTravelPlan(t *testing.T) {
 		userID := uint(1)
 		travelID := uint(10)
 
-		input := travel.CreateTravelPlanInput{
+		input := CreateTravelPlanInput{
 			Date:      time.Date(2026, 10, 1, 0, 0, 0, 0, time.UTC),
 			Place:     "バンコク",
 			Content:   "ワット・ポーを観光",
 			SortOrder: 1,
 		}
 
-		travelData := &travel.Travel{
+		travelData := &Travel{
 			ID:     travelID,
 			UserID: userID,
 		}
 
 		travelRepository := &MockTravelRepository{
-			FindByIDFunc: func(id uint) (*travel.Travel, error) {
+			FindByIDFunc: func(id uint) (*Travel, error) {
 				return travelData, nil
 			},
 		}
 
-		travelPlanRepository := &MockRepository{
-			CreateFunc: func(travelPlan *travel.TravelPlan) error {
+		travelPlanRepository := &MockPlanRepository{
+			CreateFunc: func(travelPlan *TravelPlan) error {
 				return nil
 			},
 		}
 
-		useCase := travel.NewPlanUseCase(
+		useCase := NewPlanUseCase(
 			travelRepository,
 			travelPlanRepository,
 		)
@@ -80,7 +79,7 @@ func TestUseCase_CreateTravelPlan_Invalid(t *testing.T) {
 		name        string
 		userID      uint
 		travelID    uint
-		travelData  *travel.Travel
+		travelData  *Travel
 		findByIDErr error
 		wantErr     error
 	}{
@@ -88,7 +87,7 @@ func TestUseCase_CreateTravelPlan_Invalid(t *testing.T) {
 			name:     "他人の旅行には旅程を追加できない",
 			userID:   1,
 			travelID: 10,
-			travelData: &travel.Travel{
+			travelData: &Travel{
 				ID:     10,
 				UserID: 2,
 			},
@@ -106,24 +105,24 @@ func TestUseCase_CreateTravelPlan_Invalid(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			travelRepository := &MockTravelRepository{
-				FindByIDFunc: func(id uint) (*travel.Travel, error) {
+				FindByIDFunc: func(id uint) (*Travel, error) {
 					return tt.travelData, tt.findByIDErr
 				},
 			}
 
-			travelPlanRepository := &MockRepository{
-				CreateFunc: func(travelPlan *travel.TravelPlan) error {
+			travelPlanRepository := &MockPlanRepository{
+				CreateFunc: func(travelPlan *TravelPlan) error {
 					t.Fatal("Create should not be called")
 					return nil
 				},
 			}
 
-			useCase := travel.NewPlanUseCase(
+			useCase := NewPlanUseCase(
 				travelRepository,
 				travelPlanRepository,
 			)
 
-			input := travel.CreateTravelPlanInput{
+			input := CreateTravelPlanInput{
 				Date:      time.Date(2026, 10, 1, 0, 0, 0, 0, time.UTC),
 				Place:     "バンコク",
 				Content:   "観光",

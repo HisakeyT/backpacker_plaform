@@ -1,11 +1,8 @@
-package travel_plan
+package travel
 
 import (
-	"github.com/HisakeyT/backpacker-platform/internal/travel"
 	"time"
 )
-
-const dateLayout = "2006-01-02"
 
 type TravelPlanResponse struct {
 	ID        uint      `json:"id"`
@@ -18,7 +15,7 @@ type TravelPlanResponse struct {
 	UpdatedAt time.Time `json:"updated_at"`
 }
 
-func toTravelPlanResponse(p travel.TravelPlan) TravelPlanResponse {
+func toTravelPlanResponse(p TravelPlan) TravelPlanResponse {
 	return TravelPlanResponse{
 		ID:        p.ID,
 		TravelID:  p.TravelID,

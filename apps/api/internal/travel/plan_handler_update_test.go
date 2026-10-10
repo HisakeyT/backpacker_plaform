@@ -1,4 +1,4 @@
-package travel_plan
+package travel
 
 import (
 	"net/http"
@@ -7,7 +7,6 @@ import (
 	"testing"
 	"time"
 
-	"github.com/HisakeyT/backpacker-platform/internal/travel"
 	"github.com/gin-gonic/gin"
 )
 
@@ -19,7 +18,7 @@ func TestHandler_UpdateTravelPlan(t *testing.T) {
 		travelID   string
 		planID     string
 		request    string
-		repository travel.PlanRepository
+		repository PlanRepository
 		wantStatus int
 	}{
 		{
@@ -27,9 +26,9 @@ func TestHandler_UpdateTravelPlan(t *testing.T) {
 			travelID: "1",
 			planID:   "1",
 			request:  `{"date":"2026-10-02"}`,
-			repository: &MockRepository{
-				FindByIDFunc: func(id uint) (*travel.TravelPlan, error) {
-					return &travel.TravelPlan{
+			repository: &MockPlanRepository{
+				FindByIDFunc: func(id uint) (*TravelPlan, error) {
+					return &TravelPlan{
 						ID:        1,
 						TravelID:  1,
 						Date:      time.Date(2026, 10, 1, 0, 0, 0, 0, time.UTC),
@@ -38,7 +37,7 @@ func TestHandler_UpdateTravelPlan(t *testing.T) {
 						SortOrder: 1,
 					}, nil
 				},
-				UpdateFunc: func(travelPlan *travel.TravelPlan) error {
+				UpdateFunc: func(travelPlan *TravelPlan) error {
 					return nil
 				},
 			},
@@ -49,9 +48,9 @@ func TestHandler_UpdateTravelPlan(t *testing.T) {
 			travelID: "1",
 			planID:   "1",
 			request:  `{"place":"チェンマイ"}`,
-			repository: &MockRepository{
-				FindByIDFunc: func(id uint) (*travel.TravelPlan, error) {
-					return &travel.TravelPlan{
+			repository: &MockPlanRepository{
+				FindByIDFunc: func(id uint) (*TravelPlan, error) {
+					return &TravelPlan{
 						ID:        1,
 						TravelID:  1,
 						Date:      time.Date(2026, 10, 1, 0, 0, 0, 0, time.UTC),
@@ -60,7 +59,7 @@ func TestHandler_UpdateTravelPlan(t *testing.T) {
 						SortOrder: 1,
 					}, nil
 				},
-				UpdateFunc: func(travelPlan *travel.TravelPlan) error {
+				UpdateFunc: func(travelPlan *TravelPlan) error {
 					return nil
 				},
 			},
@@ -71,9 +70,9 @@ func TestHandler_UpdateTravelPlan(t *testing.T) {
 			travelID: "1",
 			planID:   "1",
 			request:  `{"content":"ワット・プラ・シン"}`,
-			repository: &MockRepository{
-				FindByIDFunc: func(id uint) (*travel.TravelPlan, error) {
-					return &travel.TravelPlan{
+			repository: &MockPlanRepository{
+				FindByIDFunc: func(id uint) (*TravelPlan, error) {
+					return &TravelPlan{
 						ID:        1,
 						TravelID:  1,
 						Date:      time.Date(2026, 10, 1, 0, 0, 0, 0, time.UTC),
@@ -82,7 +81,7 @@ func TestHandler_UpdateTravelPlan(t *testing.T) {
 						SortOrder: 1,
 					}, nil
 				},
-				UpdateFunc: func(travelPlan *travel.TravelPlan) error {
+				UpdateFunc: func(travelPlan *TravelPlan) error {
 					return nil
 				},
 			},
@@ -93,9 +92,9 @@ func TestHandler_UpdateTravelPlan(t *testing.T) {
 			travelID: "1",
 			planID:   "1",
 			request:  `{"sort_order":2}`,
-			repository: &MockRepository{
-				FindByIDFunc: func(id uint) (*travel.TravelPlan, error) {
-					return &travel.TravelPlan{
+			repository: &MockPlanRepository{
+				FindByIDFunc: func(id uint) (*TravelPlan, error) {
+					return &TravelPlan{
 						ID:        1,
 						TravelID:  1,
 						Date:      time.Date(2026, 10, 1, 0, 0, 0, 0, time.UTC),
@@ -104,7 +103,7 @@ func TestHandler_UpdateTravelPlan(t *testing.T) {
 						SortOrder: 1,
 					}, nil
 				},
-				UpdateFunc: func(travelPlan *travel.TravelPlan) error {
+				UpdateFunc: func(travelPlan *TravelPlan) error {
 					return nil
 				},
 			},
@@ -115,7 +114,7 @@ func TestHandler_UpdateTravelPlan(t *testing.T) {
 			travelID:   "1",
 			planID:     "1",
 			request:    `{"date":}`,
-			repository: &MockRepository{},
+			repository: &MockPlanRepository{},
 			wantStatus: http.StatusBadRequest,
 		},
 		{
@@ -123,7 +122,7 @@ func TestHandler_UpdateTravelPlan(t *testing.T) {
 			travelID:   "abc",
 			planID:     "1",
 			request:    `{}`,
-			repository: &MockRepository{},
+			repository: &MockPlanRepository{},
 			wantStatus: http.StatusBadRequest,
 		},
 		{
@@ -131,7 +130,7 @@ func TestHandler_UpdateTravelPlan(t *testing.T) {
 			travelID:   "1",
 			planID:     "abc",
 			request:    `{}`,
-			repository: &MockRepository{},
+			repository: &MockPlanRepository{},
 			wantStatus: http.StatusBadRequest,
 		},
 		{
@@ -139,7 +138,7 @@ func TestHandler_UpdateTravelPlan(t *testing.T) {
 			travelID:   "1",
 			planID:     "1",
 			request:    `{"date":"2026-99-99"}`,
-			repository: &MockRepository{},
+			repository: &MockPlanRepository{},
 			wantStatus: http.StatusBadRequest,
 		},
 	}
@@ -151,15 +150,15 @@ func TestHandler_UpdateTravelPlan(t *testing.T) {
 			// TravelRepositoryはUseCaseで必要なので、
 			// 実際のプロジェクトのMockTravelRepositoryに合わせる
 			travelRepository := &MockTravelRepository{
-				FindByIDFunc: func(id uint) (*travel.Travel, error) {
-					return &travel.Travel{
+				FindByIDFunc: func(id uint) (*Travel, error) {
+					return &Travel{
 						ID:     1,
 						UserID: 1,
 					}, nil
 				},
 			}
 
-			useCase := travel.NewPlanUseCase(travelRepository, tt.repository)
+			useCase := NewPlanUseCase(travelRepository, tt.repository)
 			handler := NewPlanHandler(useCase)
 
 			router.PATCH(

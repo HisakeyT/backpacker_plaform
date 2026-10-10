@@ -1,4 +1,4 @@
-package travel_plan
+package travel
 
 import (
 	"errors"
@@ -7,7 +7,6 @@ import (
 	"testing"
 	"time"
 
-	"github.com/HisakeyT/backpacker-platform/internal/travel"
 	"github.com/HisakeyT/backpacker-platform/internal/user"
 )
 
@@ -31,15 +30,15 @@ func TestUseCase_UpdateTravelPlan(t *testing.T) {
 	t.Run("正常系", func(t *testing.T) {
 		tests := []struct {
 			name        string
-			updateInput travel.UpdateTravelPlanInput
-			want        *travel.TravelPlan
+			updateInput UpdateTravelPlanInput
+			want        *TravelPlan
 		}{
 			{
 				name: "日付を更新する",
-				updateInput: travel.UpdateTravelPlanInput{
+				updateInput: UpdateTravelPlanInput{
 					Date: &newDate,
 				},
-				want: &travel.TravelPlan{
+				want: &TravelPlan{
 					ID:        travelPlanID,
 					TravelID:  travelID,
 					Date:      newDate,
@@ -50,10 +49,10 @@ func TestUseCase_UpdateTravelPlan(t *testing.T) {
 			},
 			{
 				name: "場所を更新する",
-				updateInput: travel.UpdateTravelPlanInput{
+				updateInput: UpdateTravelPlanInput{
 					Place: &newPlace,
 				},
-				want: &travel.TravelPlan{
+				want: &TravelPlan{
 					ID:        travelPlanID,
 					TravelID:  travelID,
 					Date:      date,
@@ -64,10 +63,10 @@ func TestUseCase_UpdateTravelPlan(t *testing.T) {
 			},
 			{
 				name: "内容を更新する",
-				updateInput: travel.UpdateTravelPlanInput{
+				updateInput: UpdateTravelPlanInput{
 					Content: &newContent,
 				},
-				want: &travel.TravelPlan{
+				want: &TravelPlan{
 					ID:        travelPlanID,
 					TravelID:  travelID,
 					Date:      date,
@@ -78,10 +77,10 @@ func TestUseCase_UpdateTravelPlan(t *testing.T) {
 			},
 			{
 				name: "順番を更新する",
-				updateInput: travel.UpdateTravelPlanInput{
+				updateInput: UpdateTravelPlanInput{
 					SortOrder: &newSortOrder,
 				},
-				want: &travel.TravelPlan{
+				want: &TravelPlan{
 					ID:        travelPlanID,
 					TravelID:  travelID,
 					Date:      date,
@@ -94,9 +93,9 @@ func TestUseCase_UpdateTravelPlan(t *testing.T) {
 
 		for _, tt := range tests {
 			t.Run(tt.name, func(t *testing.T) {
-				repository := &MockRepository{
-					FindByIDFunc: func(id uint) (*travel.TravelPlan, error) {
-						return &travel.TravelPlan{
+				repository := &MockPlanRepository{
+					FindByIDFunc: func(id uint) (*TravelPlan, error) {
+						return &TravelPlan{
 							ID:        travelPlanID,
 							TravelID:  travelID,
 							Date:      date,
@@ -105,21 +104,21 @@ func TestUseCase_UpdateTravelPlan(t *testing.T) {
 							SortOrder: sortOrder,
 						}, nil
 					},
-					UpdateFunc: func(travelPlan *travel.TravelPlan) error {
+					UpdateFunc: func(travelPlan *TravelPlan) error {
 						return nil
 					},
 				}
 
 				travelRepository := &MockTravelRepository{
-					FindByIDFunc: func(id uint) (*travel.Travel, error) {
-						return &travel.Travel{
+					FindByIDFunc: func(id uint) (*Travel, error) {
+						return &Travel{
 							ID:     travelID,
 							UserID: userID,
 						}, nil
 					},
 				}
 
-				useCase := travel.NewPlanUseCase(travelRepository, repository)
+				useCase := NewPlanUseCase(travelRepository, repository)
 
 				got, err := useCase.UpdateTravelPlan(
 					userID,
@@ -145,9 +144,9 @@ func TestUseCase_UpdateTravelPlan(t *testing.T) {
 
 		tests := []struct {
 			name                    string
-			travelRepository        *travel.Travel
+			travelRepository        *Travel
 			travelRepositoryErr     error
-			travelPlanRepository    *travel.TravelPlan
+			travelPlanRepository    *TravelPlan
 			travelPlanRepositoryErr error
 			updateErr               error
 			wantErr                 error
@@ -155,11 +154,11 @@ func TestUseCase_UpdateTravelPlan(t *testing.T) {
 			{
 				name:                "Travelが存在しない",
 				travelRepositoryErr: gorm.ErrRecordNotFound,
-				wantErr:             travel.ErrTravelNotFound,
+				wantErr:             ErrTravelNotFound,
 			},
 			{
 				name: "他人のTravelを更新しようとする",
-				travelRepository: &travel.Travel{
+				travelRepository: &Travel{
 					ID:     travelID,
 					UserID: 2,
 				},
@@ -172,16 +171,16 @@ func TestUseCase_UpdateTravelPlan(t *testing.T) {
 			},
 			{
 				name: "TravelPlanが存在しない",
-				travelRepository: &travel.Travel{
+				travelRepository: &Travel{
 					ID:     travelID,
 					UserID: userID,
 				},
 				travelPlanRepositoryErr: gorm.ErrRecordNotFound,
-				wantErr:                 travel.ErrTravelPlanNotFound,
+				wantErr:                 ErrTravelPlanNotFound,
 			},
 			{
 				name: "TravelPlanのRepositoryでエラーが発生する",
-				travelRepository: &travel.Travel{
+				travelRepository: &Travel{
 					ID:     travelID,
 					UserID: userID,
 				},
@@ -190,23 +189,23 @@ func TestUseCase_UpdateTravelPlan(t *testing.T) {
 			},
 			{
 				name: "TravelPlanが指定されたTravelに属していない",
-				travelRepository: &travel.Travel{
+				travelRepository: &Travel{
 					ID:     travelID,
 					UserID: userID,
 				},
-				travelPlanRepository: &travel.TravelPlan{
+				travelPlanRepository: &TravelPlan{
 					ID:       travelPlanID,
 					TravelID: 2,
 				},
-				wantErr: travel.ErrTravelPlanNotBelongToTravel,
+				wantErr: ErrTravelPlanNotBelongToTravel,
 			},
 			{
 				name: "TravelPlanのUpdateでエラーが発生する",
-				travelRepository: &travel.Travel{
+				travelRepository: &Travel{
 					ID:     travelID,
 					UserID: userID,
 				},
-				travelPlanRepository: &travel.TravelPlan{
+				travelPlanRepository: &TravelPlan{
 					ID:       travelPlanID,
 					TravelID: travelID,
 				},
@@ -217,28 +216,28 @@ func TestUseCase_UpdateTravelPlan(t *testing.T) {
 
 		for _, tt := range tests {
 			t.Run(tt.name, func(t *testing.T) {
-				repository := &MockRepository{
-					FindByIDFunc: func(id uint) (*travel.TravelPlan, error) {
+				repository := &MockPlanRepository{
+					FindByIDFunc: func(id uint) (*TravelPlan, error) {
 						return tt.travelPlanRepository, tt.travelPlanRepositoryErr
 					},
-					UpdateFunc: func(travelPlan *travel.TravelPlan) error {
+					UpdateFunc: func(travelPlan *TravelPlan) error {
 						return tt.updateErr
 					},
 				}
 
 				travelRepository := &MockTravelRepository{
-					FindByIDFunc: func(id uint) (*travel.Travel, error) {
+					FindByIDFunc: func(id uint) (*Travel, error) {
 						return tt.travelRepository, tt.travelRepositoryErr
 					},
 				}
 
-				useCase := travel.NewPlanUseCase(travelRepository, repository)
+				useCase := NewPlanUseCase(travelRepository, repository)
 
 				_, err := useCase.UpdateTravelPlan(
 					userID,
 					travelID,
 					travelPlanID,
-					travel.UpdateTravelPlanInput{
+					UpdateTravelPlanInput{
 						Place: &newPlace,
 					},
 				)
