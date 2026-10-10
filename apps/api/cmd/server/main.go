@@ -52,6 +52,7 @@ func main() {
 
 	protected.POST("/travels", travelHandler.CreateTravel)
 	protected.PATCH("/travels/:travel_id", travelHandler.UpdateTravel)
+	protected.POST("/travels/:travel_id/copy", travelHandler.CopyTravel)
 	protected.GET("/travels", travelHandler.GetTravels)
 	protected.GET("/travels/:travel_id", travelHandler.GetTravel)
 	protected.DELETE("/travels/:travel_id", travelHandler.DeleteTravel)

@@ -318,3 +318,34 @@ func (h *Handler) GetPublicTravel(c *gin.Context) {
 
 	c.JSON(http.StatusOK, toPublicTravelResponse(travel))
 }
+
+func (h *Handler) CopyTravel(c *gin.Context) {
+	userID := c.GetUint("userID")
+
+	travelID64, err := strconv.ParseUint(c.Param("travel_id"), 10, 64)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "invalid travel_id",
+		})
+		return
+	}
+
+	travel, err := h.useCase.CopyTravel(userID, uint(travelID64))
+	if err != nil {
+		if errors.Is(err, ErrTravelNotFound) {
+			c.JSON(http.StatusNotFound, gin.H{
+				"error": err.Error(),
+			})
+			return
+		}
+
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": "internal server error",
+		})
+		return
+	}
+
+	c.JSON(http.StatusCreated, gin.H{
+		"id": travel.ID,
+	})
+}
