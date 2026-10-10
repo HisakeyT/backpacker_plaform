@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useParams, useNavigate } from "react-router-dom";
-import { Box, Button, Typography } from "@mui/material";
+import { Box, Button, Typography, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, } from "@mui/material";
 import { useAuth } from "../../app/providers/useAuth.ts";
 import { PublicTravelPlanList } from "../travelPlan/PublicTravelPlanList";
 import { getPublicTravel, copyTravel } from "./repository";
@@ -15,6 +15,7 @@ export const PublicTravelDetailPage = () => {
   const [error, setError] = useState<string | null>(null);
   const [isCopying, setIsCopying] = useState(false);
   const [copyError, setCopyError] = useState<string | null>(null);
+  const [isConfirmOpen, setIsConfirmOpen] = useState(false);
 
   useEffect(() => {
     if (!travelId) return;
@@ -33,23 +34,33 @@ export const PublicTravelDetailPage = () => {
     fetchTravel();
   }, [travelId]);
 
-  const handleCopy = async () => {
+  const handleCopyClick = () => {
+    if (!travel) return;
     if (!token) {
-      navigate("/login");
+      navigate("/login", { state: { from: `/public/travels/${travel.id}` } });
       return;
     }
-    if (!travel) return;
-
-    setIsCopying(true);
     setCopyError(null);
+    setIsConfirmOpen(true);
+  };
+
+  const handleConfirmCopy = async () => {
+    if (!travel || !token) return;
+    setIsCopying(true);
     try {
       const { id } = await copyTravel(token, travel.id);
-      navigate(`/travels/${id}`); // 遷移先は実際のルートに合わせる
+      navigate(`/travels/${id}`, { state: { copied: true } });
     } catch {
       setCopyError("コピーに失敗しました。もう一度お試しください");
       setIsCopying(false);
     }
   };
+
+  const copyButtonLabel = isCopying
+    ? "コピー中..."
+    : token
+      ? "この旅を参考にする"
+      : "ログインして参考にする";
 
   if (isLoading) return <Typography>Loading...</Typography>;
   if (error || !travel) {
@@ -85,19 +96,33 @@ export const PublicTravelDetailPage = () => {
         by {travel.authorNickname}
       </Typography>
 
-      <Button
-        variant="contained"
-        onClick={handleCopy}
-        disabled={isCopying}
-        sx={{ mt: 2 }}
-      >
-        {isCopying ? "コピー中..." : "この旅を参考にする"}
+      <Button variant="contained" size="large" onClick={handleCopyClick}>
+        {token ? "この旅を参考にする" : "ログインして参考にする"}
       </Button>
-      {copyError && (
-        <Typography color="error" variant="body2" sx={{ mt: 1 }}>
-          {copyError}
-        </Typography>
-      )}
+
+      <Dialog open={isConfirmOpen} onClose={() => !isCopying && setIsConfirmOpen(false)}>
+        <DialogTitle>この旅を参考にしますか?</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            「{travel.title}」のプランを、あなたの旅行としてコピーします。
+            元の旅行は変わりません。コピーした旅行は非公開で、あとから自由に編集できます。
+            日付は元のままなので、旅行の予定に合わせて直してください。
+          </DialogContentText>
+          {copyError && (
+            <Typography color="error" variant="body2" sx={{ mt: 2 }}>
+              {copyError}
+            </Typography>
+          )}
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setIsConfirmOpen(false)} disabled={isCopying}>
+            キャンセル
+          </Button>
+          <Button variant="contained" onClick={handleConfirmCopy} disabled={isCopying}>
+            {isCopying ? "コピー中..." : "コピーする"}
+          </Button>
+        </DialogActions>
+      </Dialog>
 
       <Typography variant="h5" component="h2" sx={{ mt: 4, mb: 2 }}>
         旅のプラン
