@@ -9,7 +9,6 @@ import (
 	"github.com/HisakeyT/backpacker-platform/internal/auth"
 	"github.com/HisakeyT/backpacker-platform/internal/database"
 	"github.com/HisakeyT/backpacker-platform/internal/travel"
-	"github.com/HisakeyT/backpacker-platform/internal/travel_plan"
 	"github.com/HisakeyT/backpacker-platform/internal/user"
 )
 
@@ -32,7 +31,7 @@ func main() {
 
 	travelPlanRepository := travel.NewGormPlanRepository(db)
 	travelPlanUseCase := travel.NewPlanUseCase(travelRepository, travelPlanRepository)
-	travelPlanHandler := travel_plan.NewPlanHandler(travelPlanUseCase)
+	travelPlanHandler := travel.NewPlanHandler(travelPlanUseCase)
 
 	r := gin.Default()
 
