@@ -46,3 +46,13 @@ export const getPublicTravels = async (): Promise<PublicTravel[]> => {
 export const getPublicTravel = async (travelId: number): Promise<PublicTravel> => {
   return apiFetch<PublicTravel>(`/api/travels/public/${travelId}`, { method: "GET" });
 };
+
+export const copyTravel = async (token: string, travelId: number): Promise<{ id: number }> => {
+  return apiFetch<{ id: number }>(
+    `/api/travels/${travelId}/copy`,
+    {
+      method: "POST",
+      token,
+    }
+  );
+};

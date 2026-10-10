@@ -1,15 +1,20 @@
 import { useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useParams, useNavigate } from "react-router-dom";
 import { Box, Button, Typography } from "@mui/material";
+import { useAuth } from "../../app/providers/useAuth.ts";
 import { PublicTravelPlanList } from "../travelPlan/PublicTravelPlanList";
-import { getPublicTravel } from "./repository";
+import { getPublicTravel, copyTravel } from "./repository";
 import type { PublicTravel } from "./types";
 
 export const PublicTravelDetailPage = () => {
   const { travelId } = useParams();
+  const navigate = useNavigate();
+  const { token } = useAuth();
   const [travel, setTravel] = useState<PublicTravel | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isCopying, setIsCopying] = useState(false);
+  const [copyError, setCopyError] = useState<string | null>(null);
 
   useEffect(() => {
     if (!travelId) return;
@@ -27,6 +32,24 @@ export const PublicTravelDetailPage = () => {
 
     fetchTravel();
   }, [travelId]);
+
+  const handleCopy = async () => {
+    if (!token) {
+      navigate("/login");
+      return;
+    }
+    if (!travel) return;
+
+    setIsCopying(true);
+    setCopyError(null);
+    try {
+      const { id } = await copyTravel(token, travel.id);
+      navigate(`/travels/${id}`); // 遷移先は実際のルートに合わせる
+    } catch {
+      setCopyError("コピーに失敗しました。もう一度お試しください");
+      setIsCopying(false);
+    }
+  };
 
   if (isLoading) return <Typography>Loading...</Typography>;
   if (error || !travel) {
@@ -61,6 +84,20 @@ export const PublicTravelDetailPage = () => {
       <Typography variant="body2" color="text.secondary">
         by {travel.authorNickname}
       </Typography>
+
+      <Button
+        variant="contained"
+        onClick={handleCopy}
+        disabled={isCopying}
+        sx={{ mt: 2 }}
+      >
+        {isCopying ? "コピー中..." : "この旅を参考にする"}
+      </Button>
+      {copyError && (
+        <Typography color="error" variant="body2" sx={{ mt: 1 }}>
+          {copyError}
+        </Typography>
+      )}
 
       <Typography variant="h5" component="h2" sx={{ mt: 4, mb: 2 }}>
         旅のプラン
