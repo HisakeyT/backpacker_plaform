@@ -31,12 +31,12 @@ func TestUseCase_UpdateTravelPlan(t *testing.T) {
 	t.Run("正常系", func(t *testing.T) {
 		tests := []struct {
 			name        string
-			updateInput UpdateTravelPlanInput
+			updateInput travel.UpdateTravelPlanInput
 			want        *travel.TravelPlan
 		}{
 			{
 				name: "日付を更新する",
-				updateInput: UpdateTravelPlanInput{
+				updateInput: travel.UpdateTravelPlanInput{
 					Date: &newDate,
 				},
 				want: &travel.TravelPlan{
@@ -50,7 +50,7 @@ func TestUseCase_UpdateTravelPlan(t *testing.T) {
 			},
 			{
 				name: "場所を更新する",
-				updateInput: UpdateTravelPlanInput{
+				updateInput: travel.UpdateTravelPlanInput{
 					Place: &newPlace,
 				},
 				want: &travel.TravelPlan{
@@ -64,7 +64,7 @@ func TestUseCase_UpdateTravelPlan(t *testing.T) {
 			},
 			{
 				name: "内容を更新する",
-				updateInput: UpdateTravelPlanInput{
+				updateInput: travel.UpdateTravelPlanInput{
 					Content: &newContent,
 				},
 				want: &travel.TravelPlan{
@@ -78,7 +78,7 @@ func TestUseCase_UpdateTravelPlan(t *testing.T) {
 			},
 			{
 				name: "順番を更新する",
-				updateInput: UpdateTravelPlanInput{
+				updateInput: travel.UpdateTravelPlanInput{
 					SortOrder: &newSortOrder,
 				},
 				want: &travel.TravelPlan{
@@ -119,7 +119,7 @@ func TestUseCase_UpdateTravelPlan(t *testing.T) {
 					},
 				}
 
-				useCase := NewPlanUseCase(travelRepository, repository)
+				useCase := travel.NewPlanUseCase(travelRepository, repository)
 
 				got, err := useCase.UpdateTravelPlan(
 					userID,
@@ -232,13 +232,13 @@ func TestUseCase_UpdateTravelPlan(t *testing.T) {
 					},
 				}
 
-				useCase := NewPlanUseCase(travelRepository, repository)
+				useCase := travel.NewPlanUseCase(travelRepository, repository)
 
 				_, err := useCase.UpdateTravelPlan(
 					userID,
 					travelID,
 					travelPlanID,
-					UpdateTravelPlanInput{
+					travel.UpdateTravelPlanInput{
 						Place: &newPlace,
 					},
 				)

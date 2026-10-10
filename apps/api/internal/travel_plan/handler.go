@@ -14,10 +14,10 @@ import (
 )
 
 type Handler struct {
-	useCase *PlanUsecase
+	useCase *travel.PlanUseCase
 }
 
-func NewHandler(useCase *PlanUsecase) *Handler {
+func NewHandler(useCase *travel.PlanUseCase) *Handler {
 	return &Handler{
 		useCase: useCase,
 	}
@@ -57,7 +57,7 @@ func (h *Handler) CreateTravelPlan(c *gin.Context) {
 		return
 	}
 
-	input := CreateTravelPlanInput{
+	input := travel.CreateTravelPlanInput{
 		Date:      date,
 		Place:     req.Place,
 		Content:   req.Content,
@@ -158,7 +158,7 @@ func (h *Handler) UpdateTravelPlan(c *gin.Context) {
 		date = &parsed
 	}
 
-	updateInput := UpdateTravelPlanInput{
+	updateInput := travel.UpdateTravelPlanInput{
 		Date:      date,
 		Place:     updateReq.Place,
 		Content:   updateReq.Content,

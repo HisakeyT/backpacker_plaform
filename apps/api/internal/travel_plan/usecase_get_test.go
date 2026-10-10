@@ -69,7 +69,7 @@ func TestUseCase_GetTravelPlans(t *testing.T) {
 					},
 				}
 
-				useCase := NewPlanUseCase(
+				useCase := travel.NewPlanUseCase(
 					travelRepository,
 					travelPlanRepository,
 				)
@@ -126,7 +126,7 @@ func TestUseCase_GetTravelPlans(t *testing.T) {
 
 				travelPlanRepository := &MockRepository{}
 
-				useCase := NewPlanUseCase(
+				useCase := travel.NewPlanUseCase(
 					travelRepository,
 					travelPlanRepository,
 				)

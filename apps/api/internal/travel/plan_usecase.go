@@ -1,8 +1,7 @@
-package travel_plan
+package travel
 
 import (
 	"errors"
-	"github.com/HisakeyT/backpacker-platform/internal/travel"
 	"github.com/HisakeyT/backpacker-platform/internal/user"
 	"time"
 
@@ -10,19 +9,19 @@ import (
 )
 
 type TravelRepository interface {
-	FindByID(id uint) (*travel.Travel, error)
+	FindByID(id uint) (*Travel, error)
 }
 
-type PlanUsecase struct {
+type PlanUseCase struct {
 	travelRepository     TravelRepository
-	travelPlanRepository travel.PlanRepository
+	travelPlanRepository PlanRepository
 }
 
 func NewPlanUseCase(
 	travelRepository TravelRepository,
-	travelPlanRepository travel.PlanRepository,
-) *PlanUsecase {
-	return &PlanUsecase{
+	travelPlanRepository PlanRepository,
+) *PlanUseCase {
+	return &PlanUseCase{
 		travelRepository:     travelRepository,
 		travelPlanRepository: travelPlanRepository,
 	}
@@ -35,11 +34,11 @@ type CreateTravelPlanInput struct {
 	SortOrder int
 }
 
-func (uc *PlanUsecase) CreateTravelPlan(userID, travelID uint, input CreateTravelPlanInput) (*travel.TravelPlan, error) {
+func (uc *PlanUseCase) CreateTravelPlan(userID, travelID uint, input CreateTravelPlanInput) (*TravelPlan, error) {
 	travelData, err := uc.travelRepository.FindByID(travelID)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return nil, travel.ErrTravelNotFound
+			return nil, ErrTravelNotFound
 		}
 		return nil, err
 	}
@@ -47,7 +46,7 @@ func (uc *PlanUsecase) CreateTravelPlan(userID, travelID uint, input CreateTrave
 	if travelData.UserID != userID {
 		return nil, user.ErrUserNotAuthorized
 	}
-	travelPlan := &travel.TravelPlan{
+	travelPlan := &TravelPlan{
 		TravelID:  travelID,
 		Date:      input.Date,
 		Place:     input.Place,
@@ -62,11 +61,11 @@ func (uc *PlanUsecase) CreateTravelPlan(userID, travelID uint, input CreateTrave
 	return travelPlan, nil
 }
 
-func (uc *PlanUsecase) GetTravelPlans(userID, travelID uint) ([]travel.TravelPlan, error) {
+func (uc *PlanUseCase) GetTravelPlans(userID, travelID uint) ([]TravelPlan, error) {
 	travelData, err := uc.travelRepository.FindByID(travelID)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return nil, travel.ErrTravelNotFound
+			return nil, ErrTravelNotFound
 		}
 		return nil, err
 	}
@@ -83,11 +82,11 @@ func (uc *PlanUsecase) GetTravelPlans(userID, travelID uint) ([]travel.TravelPla
 	return travelPlans, nil
 }
 
-func (uc *PlanUsecase) DeleteTravelPlan(userID, travelID, travelPlanID uint) error {
+func (uc *PlanUseCase) DeleteTravelPlan(userID, travelID, travelPlanID uint) error {
 	travelData, err := uc.travelRepository.FindByID(travelID)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return travel.ErrTravelNotFound
+			return ErrTravelNotFound
 		}
 		return err
 	}
@@ -99,13 +98,13 @@ func (uc *PlanUsecase) DeleteTravelPlan(userID, travelID, travelPlanID uint) err
 	travelPlan, err := uc.travelPlanRepository.FindByID(travelPlanID)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return travel.ErrTravelPlanNotFound
+			return ErrTravelPlanNotFound
 		}
 		return err
 	}
 
 	if travelPlan.TravelID != travelID {
-		return travel.ErrTravelPlanNotBelongToTravel
+		return ErrTravelPlanNotBelongToTravel
 	}
 
 	return uc.travelPlanRepository.Delete(travelPlanID)
@@ -118,11 +117,11 @@ type UpdateTravelPlanInput struct {
 	SortOrder *int
 }
 
-func (uc *PlanUsecase) UpdateTravelPlan(userID, travelID, travelPlanID uint, input UpdateTravelPlanInput) (*travel.TravelPlan, error) {
+func (uc *PlanUseCase) UpdateTravelPlan(userID, travelID, travelPlanID uint, input UpdateTravelPlanInput) (*TravelPlan, error) {
 	travelData, err := uc.travelRepository.FindByID(travelID)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return nil, travel.ErrTravelNotFound
+			return nil, ErrTravelNotFound
 		}
 		return nil, err
 	}
@@ -134,14 +133,14 @@ func (uc *PlanUsecase) UpdateTravelPlan(userID, travelID, travelPlanID uint, inp
 	travelPlan, err := uc.travelPlanRepository.FindByID(travelPlanID)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return nil, travel.ErrTravelPlanNotFound
+			return nil, ErrTravelPlanNotFound
 		}
 
 		return nil, err
 	}
 
 	if travelPlan.TravelID != travelID {
-		return nil, travel.ErrTravelPlanNotBelongToTravel
+		return nil, ErrTravelPlanNotBelongToTravel
 	}
 
 	applyTravelPlanUpdates(travelPlan, input)
@@ -153,7 +152,7 @@ func (uc *PlanUsecase) UpdateTravelPlan(userID, travelID, travelPlanID uint, inp
 	return travelPlan, nil
 }
 
-func applyTravelPlanUpdates(travelPlan *travel.TravelPlan, input UpdateTravelPlanInput) {
+func applyTravelPlanUpdates(travelPlan *TravelPlan, input UpdateTravelPlanInput) {
 	if input.Date != nil {
 		travelPlan.Date = *input.Date
 	}
@@ -171,17 +170,17 @@ func applyTravelPlanUpdates(travelPlan *travel.TravelPlan, input UpdateTravelPla
 	}
 }
 
-func (uc *PlanUsecase) GetPulicTravelPlan(travelID uint) ([]travel.TravelPlan, error) {
+func (uc *PlanUseCase) GetPulicTravelPlan(travelID uint) ([]TravelPlan, error) {
 	travelData, err := uc.travelRepository.FindByID(travelID)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return nil, travel.ErrTravelNotFound
+			return nil, ErrTravelNotFound
 		}
 		return nil, err
 	}
 
 	if !travelData.IsPublic {
-		return nil, travel.ErrTravelNotFound
+		return nil, ErrTravelNotFound
 	}
 
 	travelPlans, err := uc.travelPlanRepository.FindByTravelID(travelID)

@@ -17,7 +17,7 @@ func TestUseCase_CreateTravelPlan(t *testing.T) {
 		userID := uint(1)
 		travelID := uint(10)
 
-		input := CreateTravelPlanInput{
+		input := travel.CreateTravelPlanInput{
 			Date:      time.Date(2026, 10, 1, 0, 0, 0, 0, time.UTC),
 			Place:     "バンコク",
 			Content:   "ワット・ポーを観光",
@@ -41,7 +41,7 @@ func TestUseCase_CreateTravelPlan(t *testing.T) {
 			},
 		}
 
-		useCase := NewPlanUseCase(
+		useCase := travel.NewPlanUseCase(
 			travelRepository,
 			travelPlanRepository,
 		)
@@ -118,12 +118,12 @@ func TestUseCase_CreateTravelPlan_Invalid(t *testing.T) {
 				},
 			}
 
-			useCase := NewPlanUseCase(
+			useCase := travel.NewPlanUseCase(
 				travelRepository,
 				travelPlanRepository,
 			)
 
-			input := CreateTravelPlanInput{
+			input := travel.CreateTravelPlanInput{
 				Date:      time.Date(2026, 10, 1, 0, 0, 0, 0, time.UTC),
 				Place:     "バンコク",
 				Content:   "観光",
