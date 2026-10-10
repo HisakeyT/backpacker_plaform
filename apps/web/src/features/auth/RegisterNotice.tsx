@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import { Alert, Snackbar } from "@mui/material";
 import { useLocation } from "react-router-dom";
 import type { LoginLocationState } from "./types";
+import { FlashMessage } from "../../components/FlashMessage";
 
 export const RegisteredNotice = () => {
   const location = useLocation();
@@ -13,15 +13,8 @@ export const RegisteredNotice = () => {
   }, [state]);
 
   return (
-    <Snackbar
-      open={open}
-      autoHideDuration={5000}
-      onClose={() => setOpen(false)}
-      anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
-    >
-      <Alert severity="success" variant="filled" onClose={() => setOpen(false)}>
-        登録しました。ログインしてください
-      </Alert>
-    </Snackbar>
+    <FlashMessage open={open} onClose={() => setOpen(false)} severity="success">
+      登録が完了しました。ログインしてください。
+    </FlashMessage>
   );
 };

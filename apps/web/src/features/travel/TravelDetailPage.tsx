@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { Link, useParams } from "react-router-dom";
-import { Alert, Box, Button, Chip, Typography, Snackbar } from "@mui/material";
+import { Box, Button, Chip, Typography } from "@mui/material";
 import { useAuth } from "../../app/providers/useAuth";
 import { ConfirmDeleteDialog } from "../../components/ComfirmDeleteDialog"
 import { TravelPlanList } from "../travelPlan/TravelPlanList";
 import { TravelPlanDialog } from "../travelPlan/TravelPlanDialog";
+import { TravelCopiedNotice } from "./TravelCopiedNotice";
 import { getTravel, deleteTravel } from "./repository";
 import type { Travel } from "./types";
 
@@ -22,17 +23,6 @@ export const TravelDetailPage = () => {
   const [deleteError, setDeleteError] = useState<string | null>(null);
 
   const [isPlanDialogOpen, setIsPlanDialogOpen] = useState(false);
-
-  const location = useLocation();
-  const [showCopiedNotice, setShowCopiedNotice] = useState(
-    Boolean(location.state?.copied),
-  );
-
-  useEffect(() => {
-    if (location.state?.copied) {
-      navigate(location.pathname, { replace: true, state: null });
-    }
-  }, []);
 
   useEffect(() => {
     if (!token || !travelId) return;
@@ -180,20 +170,7 @@ export const TravelDetailPage = () => {
         onSaved={handlePlanSaved}
       />
 
-      <Snackbar
-        open={showCopiedNotice}
-        autoHideDuration={5000}
-        onClose={() => setShowCopiedNotice(false)}
-        anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
-      >
-        <Alert
-          severity="success"
-          variant="filled"
-          onClose={() => setShowCopiedNotice(false)}
-        >
-          旅行をコピーしました。日付を確認して、あなたの予定に合わせて編集しましょう。
-        </Alert>
-      </Snackbar>
+      <TravelCopiedNotice />
     </Box>
   );
 };
