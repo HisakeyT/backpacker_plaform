@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { Link, useParams, useNavigate } from "react-router-dom";
-import { Box, Button, Typography, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, } from "@mui/material";
+import { Box, Button, Typography, } from "@mui/material";
 import { useAuth } from "../../app/providers/useAuth.ts";
+import { ConfirmDialog } from "../../components/ConfirmDialog";
 import { PublicTravelPlanList } from "../travelPlan/PublicTravelPlanList";
 import { getPublicTravel, copyTravel } from "./repository";
 import type { PublicTravel } from "./types";
@@ -100,29 +101,17 @@ export const PublicTravelDetailPage = () => {
         {token ? "この旅を参考にする" : "ログインして参考にする"}
       </Button>
 
-      <Dialog open={isConfirmOpen} onClose={() => !isCopying && setIsConfirmOpen(false)}>
-        <DialogTitle>この旅を参考にしますか?</DialogTitle>
-        <DialogContent>
-          <DialogContentText>
-            「{travel.title}」のプランを、あなたの旅行としてコピーします。
-            元の旅行は変わりません。コピーした旅行は非公開で、あとから自由に編集できます。
-            日付は元のままなので、旅行の予定に合わせて直してください。
-          </DialogContentText>
-          {copyError && (
-            <Typography color="error" variant="body2" sx={{ mt: 2 }}>
-              {copyError}
-            </Typography>
-          )}
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setIsConfirmOpen(false)} disabled={isCopying}>
-            キャンセル
-          </Button>
-          <Button variant="contained" onClick={handleConfirmCopy} disabled={isCopying}>
-            {isCopying ? "コピー中..." : "コピーする"}
-          </Button>
-        </DialogActions>
-      </Dialog>
+      <ConfirmDialog
+        open={isConfirmOpen}
+        heading="この旅を参考にしますか？"
+        description={`「${travel.title}」のプランを、あなたの旅行としてコピーします。元の旅行は変わりません。コピーした旅行は非公開で、あとから自由に編集できます。日付は元のままなので、旅行の予定に合わせて直してください。`}
+        error={copyError}
+        busy={isCopying}
+        confirmLabel="コピーする"
+        busyLabel="コピー中..."
+        onClose={() => setIsConfirmOpen(false)}
+        onConfirm={handleConfirmCopy}
+      />
 
       <Typography variant="h5" component="h2" sx={{ mt: 4, mb: 2 }}>
         旅のプラン
