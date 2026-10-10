@@ -5,7 +5,7 @@ import { getTravelPlans, deleteTravelPlan } from "./repository";
 import type { TravelPlan } from "./types";
 import { TravelPlanCard } from "./TravelPlanCard";
 import { TravelPlanDialog } from "./TravelPlanDialog";
-import { ConfirmDeleteDialog } from "../../components/ComfirmDeleteDialog";
+import { ConfirmDialog } from "../../components/ConfirmDialog";
 
 type TravelPlanListProps = {
   travelId: number;
@@ -128,12 +128,15 @@ export const TravelPlanList = ({ travelId, startDate, endDate, reloadKey = 0 }: 
       }
 
       {deletingPlan && (
-        <ConfirmDeleteDialog
+        <ConfirmDialog
           open
           heading="プランを削除しますか？"
           description={`「${deletingPlan.place}」のプランが削除されます。この操作は取り消せません。`}
           error={deleteError}
-          isDeleting={isDeleting}
+          busy={isDeleting}
+          confirmLabel="削除する"
+          busyLabel="削除中..."
+          confirmColor="error"
           onClose={handleCloseDelete}
           onConfirm={handleConfirmDelete}
         />
