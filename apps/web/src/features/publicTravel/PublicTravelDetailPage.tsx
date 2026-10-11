@@ -60,11 +60,7 @@ export const PublicTravelDetailPage = () => {
     }
   };
 
-  const copyButtonLabel = isCopying
-    ? "コピー中..."
-    : token
-      ? "この旅を参考にする"
-      : "ログインして参考にする";
+  const copyButtonLabel = token ? "自分の旅行にコピー" : "ログインしてコピー";
 
   if (isLoading) return <Typography>Loading...</Typography>;
   if (error || !travel) {
@@ -101,16 +97,16 @@ export const PublicTravelDetailPage = () => {
       </Typography>
 
       <Button variant="contained" size="large" onClick={handleCopyClick}>
-        {token ? "この旅を参考にする" : "ログインして参考にする"}
+        {copyButtonLabel}
       </Button>
 
       <ConfirmDialog
         open={isConfirmOpen}
-        heading="この旅を参考にしますか？"
+        heading="この旅を自分の旅行にコピーしますか？"
         description={`「${travel.title}」のプランを、あなたの旅行としてコピーします。元の旅行は変わりません。コピーした旅行は非公開で、あとから自由に編集できます。日付は元のままなので、旅行の予定に合わせて直してください。`}
         error={copyError}
         busy={isCopying}
-        confirmLabel={copyButtonLabel}
+        confirmLabel="コピーする"
         busyLabel="コピー中..."
         onClose={() => setIsConfirmOpen(false)}
         onConfirm={handleConfirmCopy}
