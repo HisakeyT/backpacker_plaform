@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Link, useParams } from "react-router-dom";
 import { Box, Button, Chip, Typography } from "@mui/material";
 import { useAuth } from "../../app/providers/useAuth";
+import { useFlash } from "../../app/providers/useFlash";
 import { ConfirmDialog } from "../../components/ConfirmDialog";
 import { TravelPlanList } from "../travelPlan/TravelPlanList";
 import { TravelPlanDialog } from "../travelPlan/TravelPlanDialog";
@@ -12,6 +13,7 @@ import type { Travel } from "./types";
 
 export const TravelDetailPage = () => {
   const { token } = useAuth();
+  const { showFlash } = useFlash();
   const { travelId } = useParams();
   const [travel, setTravel] = useState<Travel | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -43,8 +45,11 @@ export const TravelDetailPage = () => {
 
   const [reloadKey, setReloadKey] = useState(0);
 
-  const handlePlanSaved = () => {
+  const handlePlanSaved = (result: "created" | "updated") => {
     setReloadKey((k) => k + 1);
+    showFlash(
+      result === "created" ? "プランを追加しました" : "プランを更新しました",
+    );
   };
 
   const handleOpenDialog = () => {
