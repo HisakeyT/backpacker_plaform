@@ -9,8 +9,8 @@ import { TravelListPage } from "../features/travel/TravelListPage";
 import { TravelDetailPage } from "../features/travel/TravelDetailPage";
 import { TravelCreatePage } from "../features/travel/TravelCreatePage";
 import { TravelEditPage } from "../features/travel/TravelEditPage";
-import { PublicTravelListPage } from "../features/travel/PublicTravelListPage";
-import { PublicTravelDetailPage } from "../features/travel/PublicTravelDetailPage";
+import { PublicTravelListPage } from "../features/publicTravel/PublicTravelListPage";
+import { PublicTravelDetailPage } from "../features/publicTravel/PublicTravelDetailPage";
 
 export const router = createBrowserRouter([
   {

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Box, Typography } from "@mui/material";
-import { getPublicTravelPlans } from "./repository";
-import type { TravelPlan } from "./types";
+import { getPublicTravelPlans } from "../travelPlan/repository";
+import type { TravelPlan } from "../travelPlan/types";
 import { PublicTravelPlanCard } from "./PublicTravelPlanCard";
 
 type Props = {

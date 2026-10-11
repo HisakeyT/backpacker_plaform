@@ -1,6 +1,6 @@
 
 import { Card, CardContent, Typography } from "@mui/material";
-import type { TravelPlan } from "./types";
+import type { TravelPlan } from "../travelPlan/types";
 
 type PublicTravelPlanCardProps = {
   plan: TravelPlan;

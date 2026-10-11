@@ -3,9 +3,9 @@ import { Link, useParams, useNavigate } from "react-router-dom";
 import { Box, Button, Typography, } from "@mui/material";
 import { useAuth } from "../../app/providers/useAuth.ts";
 import { ConfirmDialog } from "../../components/ConfirmDialog";
-import { PublicTravelPlanList } from "../travelPlan/PublicTravelPlanList";
-import { getPublicTravel, copyTravel } from "./repository";
-import type { PublicTravel } from "./types";
+import { PublicTravelPlanList } from "./PublicTravelPlanList";
+import { getPublicTravel, copyTravel } from "../travel/repository";
+import type { PublicTravel } from "../travel/types";
 
 export const PublicTravelDetailPage = () => {
   const { travelId } = useParams();

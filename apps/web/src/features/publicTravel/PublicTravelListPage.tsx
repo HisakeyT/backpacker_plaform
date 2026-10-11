@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Box, Typography } from "@mui/material";
-import { getPublicTravels } from "./repository";
-import type { PublicTravel } from "./types";
+import { getPublicTravels } from "../travel/repository";
+import type { PublicTravel } from "../travel/types";
 import { PublicTravelCard } from "./PublicTravelCard";
 
 export const PublicTravelListPage = () => {
