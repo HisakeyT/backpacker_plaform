@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Box, Typography } from "@mui/material";
 import { useAuth } from "../../app/providers/useAuth";
+import { useFlash } from "../../app/providers/useFlash";
 import { getTravel, updateTravel } from "./repository";
 import { TravelForm } from "./TravelForm";
 import type { Travel, UpdateTravelInput } from "./types";
@@ -9,6 +10,7 @@ import type { Travel, UpdateTravelInput } from "./types";
 export const TravelEditPage = () => {
   const { travelId } = useParams();
   const { token } = useAuth();
+  const { showFlash } = useFlash();
   const navigate = useNavigate();
 
   const [travel, setTravel] = useState<Travel | null>(null);
@@ -40,6 +42,7 @@ export const TravelEditPage = () => {
     setError(null);
     try {
       await updateTravel(token, travel.id, input);
+      showFlash("旅行を更新しました");
       navigate(`/travels/${travel.id}`);
     } catch {
       setError("旅行の更新に失敗しました");

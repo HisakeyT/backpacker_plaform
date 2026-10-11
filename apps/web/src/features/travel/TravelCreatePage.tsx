@@ -2,12 +2,14 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Box, Typography } from "@mui/material";
 import { useAuth } from "../../app/providers/useAuth.ts";
+import { useFlash } from "../../app/providers/useFlash.ts";
 import { createTravel } from "./repository";
 import { TravelForm } from "./TravelForm";
 import type { CreateTravelInput } from "./types";
 
 export const TravelCreatePage = () => {
   const { token } = useAuth();
+  const { showFlash } = useFlash();
   const navigate = useNavigate();
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -18,6 +20,7 @@ export const TravelCreatePage = () => {
     setError(null);
     try {
       const travel = await createTravel(token, input);
+      showFlash("旅行を作成しました");
       navigate(`/travels/${travel.id}`);
     } catch {
       setError("旅行の作成に失敗しました");

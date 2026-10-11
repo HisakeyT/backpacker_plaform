@@ -63,6 +63,7 @@ export const TravelDetailPage = () => {
     setDeleteError(null);
     try {
       await deleteTravel(token, travel.id);
+      showFlash("旅行を削除しました");
       navigate("/travels");
     } catch {
       setDeleteError("旅行の削除に失敗しました");
