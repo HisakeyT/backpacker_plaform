@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Box, Typography } from "@mui/material";
 import { useAuth } from "../../app/providers/useAuth";
+import { useFlash } from "../../app/providers/useFlash";
 import { getTravelPlans, deleteTravelPlan } from "./repository";
 import type { TravelPlan } from "./types";
 import { TravelPlanCard } from "./TravelPlanCard";
@@ -33,6 +34,7 @@ const groupByDate = (plans: TravelPlan[]): [string, TravelPlan[]][] => {
 
 export const TravelPlanList = ({ travelId, startDate, endDate, reloadKey = 0 }: TravelPlanListProps) => {
   const { token } = useAuth();
+  const { showFlash } = useFlash();
   const [plans, setPlans] = useState<TravelPlan[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -58,6 +60,7 @@ export const TravelPlanList = ({ travelId, startDate, endDate, reloadKey = 0 }: 
       await deleteTravelPlan(token, travelId, deletingPlan.id);
       setDeletingPlan(null);
       setInnerReloadKey((k) => k + 1);
+      showFlash("プランを削除しました");
     } catch {
       setDeleteError("プランの削除に失敗しました");
     } finally {
@@ -122,7 +125,10 @@ export const TravelPlanList = ({ travelId, startDate, endDate, reloadKey = 0 }: 
             endDate={endDate}
             plan={editingPlan}
             onClose={() => setEditingPlan(null)}
-            onSaved={() => setInnerReloadKey((k) => k + 1)}
+            onSaved={() => {
+              setInnerReloadKey((k) => k + 1);
+              showFlash("プランを更新しました");
+            }}
           />
         )
       }
