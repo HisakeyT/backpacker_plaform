@@ -21,3 +21,6 @@ export type RegisterRequest = {
   passwordConfirmation: string;
 };
 
+export type LoginLocationState = {
+  from?: string; // ログイン後に戻るパス
+} | null;
