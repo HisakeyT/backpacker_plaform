@@ -40,7 +40,7 @@ export const PublicTravelDetailPage = () => {
   const handleCopyClick = () => {
     if (!travel) return;
     if (!token) {
-      navigate("/login", { state: { from: `/public/travels/${travel.id}` } });
+      navigate("/login");
       return;
     }
     setCopyError(null);

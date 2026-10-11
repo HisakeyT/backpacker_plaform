@@ -3,7 +3,6 @@ import { Link as RouterLink, useNavigate } from "react-router-dom";
 import { Link, Box, Button, TextField, Typography } from "@mui/material";
 import { PageContainer } from "../../components/layout/PageContainer";
 import { useAuth } from "../../app/providers/useAuth";
-import { RegisteredNotice } from "./RegisterNotice";
 
 export function LoginPage() {
   const [email, setEmail] = useState("");
@@ -35,8 +34,6 @@ export function LoginPage() {
         <Typography variant="h4" component="h1">
           Login
         </Typography>
-
-        <RegisteredNotice />
 
         <TextField
           label="Email"
