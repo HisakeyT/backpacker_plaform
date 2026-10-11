@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, useParams, useNavigate } from "react-router-dom";
 import { Box, Button, Typography, } from "@mui/material";
 import { useAuth } from "../../app/providers/useAuth.ts";
+import { useFlash } from "../../app/providers/useFlash.ts";
 import { ConfirmDialog } from "../../components/ConfirmDialog";
 import { PublicTravelPlanList } from "./PublicTravelPlanList";
 import { getPublicTravel, copyTravel } from "../travel/repository";
@@ -11,6 +12,7 @@ export const PublicTravelDetailPage = () => {
   const { travelId } = useParams();
   const navigate = useNavigate();
   const { token } = useAuth();
+  const { showFlash } = useFlash();
   const [travel, setTravel] = useState<PublicTravel | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -50,7 +52,8 @@ export const PublicTravelDetailPage = () => {
     setIsCopying(true);
     try {
       const { id } = await copyTravel(token, travel.id);
-      navigate(`/travels/${id}`, { state: { copied: true } });
+      showFlash("旅行をコピーしました。日付を確認して、必要に応じて編集してください。");
+      navigate(`/travels/${id}`);
     } catch {
       setCopyError("コピーに失敗しました。もう一度お試しください");
       setIsCopying(false);

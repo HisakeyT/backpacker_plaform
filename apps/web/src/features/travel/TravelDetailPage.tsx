@@ -7,7 +7,6 @@ import { useFlash } from "../../app/providers/useFlash";
 import { ConfirmDialog } from "../../components/ConfirmDialog";
 import { TravelPlanList } from "../travelPlan/TravelPlanList";
 import { TravelPlanDialog } from "../travelPlan/TravelPlanDialog";
-import { TravelCopiedNotice } from "./TravelCopiedNotice";
 import { getTravel, deleteTravel } from "./repository";
 import type { Travel } from "./types";
 
@@ -178,8 +177,6 @@ export const TravelDetailPage = () => {
         onClose={() => setIsPlanDialogOpen(false)}
         onSaved={handlePlanSaved}
       />
-
-      <TravelCopiedNotice />
     </Box>
   );
 };
